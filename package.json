@@ -1,0 +1,45 @@
+{
+  "name": "blogs-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon src/index.js --ext js,graphql --exec babel-node",
+    "debug": "nodemon --inspect src/index.js --ext js,graphql --exec babel-node",
+    "clean": "rm -rf build && mkdir build",
+    "build-server": "babel -d ./build ./src -s",
+    "build": "npm run clean && npm run build-server",
+    "serve": "NODE_ENV=production node build/index.js",
+    "migrate": "sequelize db:migrate",
+    "migrate:undo": "sequelize db:migrate:undo",
+    "seed:generate": "sequelize seed:generate --name ${FILENAME=seed}",
+    "seed": "sequelize db:seed:all",
+    "seed:undo:all": "sequelize db:seed:undo:all"
+  },
+  "author": "sanathsharma",
+  "license": "ISC",
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.15",
+    "morgan": "^1.9.1",
+    "multer": "^1.4.2",
+    "pg": "^7.17.1",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^5.21.3",
+    "uuid": "^3.3.3",
+    "validator": "^12.1.0",
+    "yup": "^0.28.3"
+  },
+  "devDependencies": {
+    "babel-plugin-module-resolver": "^4.0.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "nodemon": "^2.0.1",
+    "sequelize-cli": "^5.5.1"
+  }
+}

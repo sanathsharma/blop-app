@@ -1,0 +1,28 @@
+{
+    "presets": [
+        "env"
+    ],
+    "plugins": [
+        "transform-object-rest-spread",
+        [
+            "module-resolver",
+            {
+                "root": [
+                    "./src"
+                ],
+                "alias": {
+                    "db-config": "./src/database/config/config.js",
+                    "models": "./src/database/models",
+                    "db": "./src/db.js",
+                    "isAuth": "./src/middleware/is-auth.js"
+                }
+            }
+        ],
+        [
+            "transform-runtime",
+            {
+                "regenerator": true
+            }
+        ]
+    ]
+}

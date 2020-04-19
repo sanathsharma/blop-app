@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "baseUrl": "src",
+        "module": "commonJS",
+        "checkJs": true,
+        "moduleResolution": "node",
+        "paths": {
+            "models/*": [
+                "database/models/*"
+            ],
+            "db-config": [
+                "database/config/config.js"
+            ],
+            "db": [
+                "db.js"
+            ],
+            "isAuth": [
+                "middleware/is-auth.js"
+            ]
+        }
+    }
+}
