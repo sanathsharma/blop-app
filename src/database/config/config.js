@@ -24,6 +24,13 @@ module.exports = ( function () {
                 dialect: 'postgres'
             };
         case 'test':
-            return {};
+            return {
+                username: "root",
+                password: "root",
+                database: "blog-app",
+                host: "localhost",
+                port: "5432",
+                dialect: 'postgres'
+            };
     }
 } )();

@@ -1,8 +1,16 @@
+// express
 import express from 'express';
-import multer from 'multer';
+
+// vendors
 import * as yup from 'yup';
+import multer from 'multer';
+
+// middlewares
 import validate from 'middleware/validate-req-body';
 
+// utils
+// models
+// initializations
 const router = express.Router();
 
 // ---------------------------- multer setup -------------------------
@@ -46,7 +54,7 @@ const updateDpReqBody = yup.object().shape( {
 } ).strict( true ).noUnknown( true );
 
 // @ts-ignore
-router.post( "update_dp", validate( updateDpReqBody ), upload.single( 'file' ), ( req, res, next ) => {
+router.post( "/update_dp", validate( updateDpReqBody ), upload.single( 'file' ), ( req, res, next ) => {
     const { file, userId } = req.validatedBody;
     console.log( 'userId :', userId );
 } );

@@ -62,7 +62,7 @@ router.post( '/', upload.single( 'image' ), ( req, res, next ) => {
     const filePath = req.file.path
 } );
 
-// --------------------- response pattern -----------------------
+<!-- --------------------- response pattern ----------------------- -->
 
 {
     "status": "error | success",
@@ -70,5 +70,14 @@ router.post( '/', upload.single( 'image' ), ( req, res, next ) => {
     "error": {
         "message": ""
     },
-    "dataObject": {}
+    "data": {}
 }
+
+<!-- ---------------------- import order ----------------------- -->
+
+// express
+// vendors
+// middlewares
+// utils
+// models
+// initializations
