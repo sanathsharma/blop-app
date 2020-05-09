@@ -1,13 +1,21 @@
 import multer from 'multer';
+import fs from 'fs';
 
 // ---------------------------- multer setup -------------------------
 
 const storage = multer.diskStorage( {
     destination ( req, file, callback ) {
-        callback( null, './media/user_dp' );
+        const path = './media/user_dp';
+
+        // create folders if they dont exist
+        if ( !fs.existsSync( path ) ) {
+            fs.mkdirSync( path, { recursive: true } );
+        }
+
+        callback( null, path );
     },
     filename ( req, file, callback ) {
-        // todo create encrypted url instead
+        // todo: create encrypted url instead
         callback( null, 'user_dp_' + req['userId'] + new Date().toISOString() + '.' + file.originalname.split( '.' ).pop() );
     }
 } );
