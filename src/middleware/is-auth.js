@@ -1,4 +1,8 @@
+// vendors
 import jwt from 'jsonwebtoken';
+
+// utils
+import message from 'utils/message';
 
 export default function ( req, res, next ) {
     const authHeader = req.get( 'Authorization' );
@@ -31,10 +35,12 @@ export default function ( req, res, next ) {
 export const checkAuth = ( req, res, next ) => {
     if ( !req['isAuth'] )
         return res
-            .status( 400 )
+            .status( 200 )
             .json( {
+                status: "error",
+                message: "Unauthorized",
                 error: {
-                    message: "Unauthorized"
+                    message: message( "Unauthorized", "Token not found / Token Expired" )
                 }
             } );
     next();

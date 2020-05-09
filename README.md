@@ -34,25 +34,27 @@ const storage = multer.diskStorage( {
     }
 } );
 
+const types = ['image/png', 'image/jpeg', 'image/jpg'];
+
 const upload = multer( {
     storage,
     limits: {
         fileSize: 1024 * 1024 * 5 // 5MB
     },
     fileFilter ( req, file, callback ) {
-        if ( file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' )
+        if ( types.includes( file.mimetype ) )
             callback( null, true );
         else
-            callback( new Error( "Incorrect File Format. Accepted file formates are 'jpeg' & 'png' " ), false );
+            callback( new Error( "Incorrect File Format. Accepted file formates are 'jpeg', 'jpg' & 'png' " ) );
         /*
         * reject a file
         callback( null, false );
         * accept a file
         callback( null, true );
         * throw error for wrong file
-        callback( new Error( "Incorrect File Format." ), false );
+        callback( new Error( "Incorrect File Format." ) );
         */
-    }
+    },
 } );
 
 <!-- ----------------------- multer usage ------------------------ -->
@@ -81,3 +83,4 @@ router.post( '/', upload.single( 'image' ), ( req, res, next ) => {
 // utils
 // models
 // initializations
+// validation schema

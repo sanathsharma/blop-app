@@ -1,8 +1,8 @@
-export const sendServerError = ( res ) => ( error ) => res.status( 200 ).json( {
+export const sendServerError = ( res ) => ( error ) => ( console.log( error ), res.status( 200 ).json( {
     status: "error",
     message: "Server Error",
     error: error
-} );
+} ) );
 
 export const sendMessage = ( res, message ) => res.status( 200 ).json( {
     status: "success",

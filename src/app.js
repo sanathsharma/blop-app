@@ -17,7 +17,7 @@ export const app = express();
 // -------------------------- other middleware -----------------------
 
 app.use( morgan( 'dev' ) ); // HTTP request logger middleware
-app.use( '/media', express.static( 'media' ) );
+app.use( '/static', express.static( 'media' ) );
 app.use( express.urlencoded( { extended: false } ) );
 app.use( express.json() );
 
