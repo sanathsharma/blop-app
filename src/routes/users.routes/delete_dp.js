@@ -20,7 +20,7 @@ import UserStatus from "models/userStatus.model";
 // validation schema
 const deleteDpReqBodySchema = yup.object().shape( {} ).strict( true ).noUnknown( true, NO_UNKNOWN );
 
-export default () => [
+export default [
     checkAuth,
     validate( deleteDpReqBodySchema ),
     async ( req, res, next ) => {

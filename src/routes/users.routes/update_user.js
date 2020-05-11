@@ -24,7 +24,7 @@ const updateUserReqBody = yup.object().shape( {
     } ).strict( true ).required( "updates object is required" ).noUnknown( true, NO_UNKNOWN )
 } ).strict( true ).noUnknown( true, NO_UNKNOWN );
 
-export default () => [
+export default [
     checkAuth, validate( updateUserReqBody ),
     async ( req, res, next ) => {
         const allowedUpdates = ['password', 'firstName', 'lastName', 'bio'];

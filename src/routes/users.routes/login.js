@@ -25,7 +25,7 @@ const loginReqBodySchema = yup.object().shape( {
     password: yup.string().trim().min( 8, "password should have minimum of 8 characters" ).required( "password is required" )
 } ).noUnknown( true, NO_UNKNOWN );
 
-export default () => [
+export default [
     validate( loginReqBodySchema ),
     async ( req, res, next ) => {
         const { emailId, password } = req['validatedBody'];
@@ -77,4 +77,5 @@ export default () => [
         } catch ( e ) {
             sendServerError( res )( e );
         }
-    }];
+    }
+];

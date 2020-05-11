@@ -17,7 +17,7 @@ import User from "models/user.model";
 // validation schema
 const deleteUserReqBody = yup.object().shape( {} ).strict( true ).noUnknown( true, NO_UNKNOWN );
 
-export default () => [
+export default [
     checkAuth, validate( deleteUserReqBody ),
     ( req, res, next ) => {
         const userId = req['userId'];

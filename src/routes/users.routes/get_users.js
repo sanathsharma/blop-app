@@ -20,7 +20,7 @@ import UserStatus from "models/userStatus.model";
 // validation schema
 const getUsersReqBody = yup.object().shape( {} ).strict( true ).noUnknown( true, NO_UNKNOWN );
 
-export default () => [
+export default [
     checkAuth,
     validate( getUsersReqBody ),
     ( req, res, next ) => {
@@ -45,4 +45,5 @@ export default () => [
                 users: users.map( user => pick( user.toJSON(), ["id", "emailId", "firstName", "dp"] ) )
             } ) )
             .catch( sendServerError( res ) );
-    }]; 
+    }
+]; 

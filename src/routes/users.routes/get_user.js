@@ -21,7 +21,7 @@ const getUserReqBodySchema = yup.object().shape( {
     userId: yup.number().required( "userId is required" )
 } ).strict( true ).noUnknown( true, NO_UNKNOWN );
 
-export default () => [
+export default [
     checkAuth,
     validate( getUserReqBodySchema ),
     async ( req, res, next ) => {

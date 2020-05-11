@@ -19,8 +19,9 @@ import UserStatus from "models/userStatus.model";
 // validation schema
 const deactivateUserReqBody = yup.object().shape( {} ).strict( true ).noUnknown( true, NO_UNKNOWN );
 
-export default () => [
-    checkAuth, validate( deactivateUserReqBody ),
+export default [
+    checkAuth,
+    validate( deactivateUserReqBody ),
     async ( req, res, next ) => {
         const userId = req['userId'];
 

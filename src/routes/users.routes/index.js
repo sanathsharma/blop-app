@@ -20,15 +20,15 @@ const router = express.Router();
 
 // urls
 
-router.post( '/get_users', ...get_users() );
-router.post( '/login', ...login() );
-router.post( '/signup', ...signup() );
-router.post( "/get_user", ...get_user() );
-router.post( "/update_user", ...update_user() );
-router.post( "/deactivate_user", ...deactivate_user() );
-router.post( "/delete_user", ...delete_user() );
-router.post( "/update_dp", ...update_dp() );
-router.post( "/delete_dp", ...delete_dp() );
+router.post( '/get_users', get_users );
+router.post( '/login', login );
+router.post( '/signup', signup );
+router.post( "/get_user", get_user );
+router.post( "/update_user", update_user );
+router.post( "/deactivate_user", deactivate_user );
+router.post( "/delete_user", delete_user );
+router.post( "/update_dp", update_dp );
+router.post( "/delete_dp", delete_dp );
 
 // ---------------------------------- change password ----------------------------
 // ???????

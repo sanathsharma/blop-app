@@ -23,7 +23,7 @@ const signUpReqBodySchema = yup.object().shape( {
     bio: yup.string().trim().max( 150 ).notRequired()
 } ).strict( true ).noUnknown( true, NO_UNKNOWN );
 
-export default () => [
+export default [
     validate( signUpReqBodySchema ),
     async ( req, res, next ) => {
         const { emailId, password, firstName, lastName, bio } = req['validatedBody'];

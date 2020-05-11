@@ -21,7 +21,7 @@ import UserStatus from "models/userStatus.model";
 // validation schema
 const updateDpReqBody = yup.object().shape( {} ).strict( true ).noUnknown( true, NO_UNKNOWN );
 
-export default () => [
+export default [
     checkAuth,
     upload.single( 'file' ),
     // for multer to parse formData and place req.body, so that it can be validated
@@ -31,7 +31,7 @@ export default () => [
         const { file, userId } = req; // appended by multer
 
         // file missing in form data -> mulre upload did not run -> no file key on req
-        if ( !file ) sendError(
+        if ( !file ) return sendError(
             res,
             'File is required',
             'File is required'
