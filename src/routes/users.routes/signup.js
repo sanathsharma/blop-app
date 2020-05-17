@@ -11,7 +11,7 @@ import { NO_UNKNOWN } from "utils/constants";
 import { sendError, sendData, sendServerError } from "utils/response";
 
 // models
-import UserStatus from "models/userStatus.model";
+import UserStatus from "models/user/userStatus.model";
 
 // initializations
 // validation schema
@@ -59,6 +59,6 @@ export default [
             sendData( res, { newUser: newUser.get() } );
 
         } catch ( e ) {
-            sendServerError( res )( e );
+            next( e );
         }
     }]; 

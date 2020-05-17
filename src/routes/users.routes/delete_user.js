@@ -11,7 +11,7 @@ import { NO_UNKNOWN } from "utils/constants";
 import { sendMessage, sendServerError } from "utils/response";
 
 // models
-import User from "models/user.model";
+import User from "models/user/user.model";
 
 // initializations
 // validation schema

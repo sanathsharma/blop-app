@@ -11,7 +11,7 @@ import { NO_UNKNOWN } from "utils/constants";
 import { sendError, sendMessage, sendServerError } from "utils/response";
 
 // models
-import User from "models/user.model";
+import User from "models/user/user.model";
 
 // initializations
 // validation schema
@@ -46,9 +46,12 @@ export default [
             } );
 
             // save and send the succes response
-            await user.save();
+            if ( user.changed() )
+                await user.save();
+
+            // send success respones
             sendMessage( res, "User info updated" );
         } catch ( e ) {
-            sendServerError( res )( e );
+            next( e );
         }
     }]; 

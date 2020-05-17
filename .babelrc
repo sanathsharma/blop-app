@@ -1,4 +1,6 @@
 {
+    "inputSourceMap": false,
+    "sourceMaps": false,
     "presets": [
         "env"
     ],

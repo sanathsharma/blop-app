@@ -8,14 +8,14 @@ import validate from "middleware/validate-req-body";
 
 // utils
 import message from "utils/message";
-import upload from "./dp_storage.util";
+import uploadUserDp from "./dp_storage.util";
 import { NO_UNKNOWN } from "utils/constants";
 import { sendData, sendServerError, sendError } from "utils/response";
 
 // models
-import User from "models/user.model";
-import UserDp from "models/userDp.model";
-import UserStatus from "models/userStatus.model";
+import User from "models/user/user.model";
+import UserDp from "models/user/userDp.model";
+import UserStatus from "models/user/userStatus.model";
 
 // initializations
 // validation schema
@@ -23,7 +23,7 @@ const updateDpReqBody = yup.object().shape( {} ).strict( true ).noUnknown( true,
 
 export default [
     checkAuth,
-    upload.single( 'file' ),
+    uploadUserDp.single( 'file' ),
     // for multer to parse formData and place req.body, so that it can be validated
     // for unwanted data except file, which is validated in multer upload function defination
     validate( updateDpReqBody ),
@@ -72,7 +72,7 @@ export default [
             sendData( res, { dp: dp.url } );
 
         } catch ( e ) {
-            sendServerError( res )( e );
+            next( e );
         }
     }
 ];

@@ -4,6 +4,8 @@
         "module": "commonJS",
         "checkJs": true,
         "moduleResolution": "node",
+        "strict": true,
+        "noImplicitAny": false,
         "paths": {
             "models/*": [
                 "database/models/*"

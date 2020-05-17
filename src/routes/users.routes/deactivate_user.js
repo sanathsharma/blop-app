@@ -12,8 +12,8 @@ import { NO_UNKNOWN } from 'utils/constants';
 import { sendError, sendMessage, sendServerError } from "utils/response";
 
 // models
-import User from "models/user.model";
-import UserStatus from "models/userStatus.model";
+import User from "models/user/user.model";
+import UserStatus from "models/user/userStatus.model";
 
 // initializations
 // validation schema
@@ -45,6 +45,6 @@ export default [
             // send success response
             sendMessage( res, "Account Deactivated" );
         } catch ( e ) {
-            sendServerError( res )( e );
+            next( e );
         }
     }];

@@ -18,7 +18,7 @@ import delete_dp from './delete_dp';
 // initializations
 const router = express.Router();
 
-// urls
+// ---------------------------- routes --------------------------
 
 router.post( '/get_users', get_users );
 router.post( '/login', login );

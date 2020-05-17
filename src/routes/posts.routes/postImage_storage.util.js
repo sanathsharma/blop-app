@@ -5,7 +5,7 @@ import fs from 'fs';
 
 const storage = multer.diskStorage( {
     destination ( req, file, callback ) {
-        const path = './media/user_dp';
+        const path = './media/post_image';
 
         // create folders if they dont exist
         if ( !fs.existsSync( path ) ) {
@@ -16,13 +16,13 @@ const storage = multer.diskStorage( {
     },
     filename ( req, file, callback ) {
         // todo: create encrypted url instead
-        callback( null, 'user_dp_' + req['userId'] + new Date().toISOString() + '.' + file.originalname.split( '.' ).pop() );
+        callback( null, 'post_image_' + req['userId'] + new Date().toISOString() + '.' + file.originalname.split( '.' ).pop() );
     }
 } );
 
 const types = ['image/png', 'image/jpeg', 'image/jpg'];
 
-const uploadUserDp = multer( {
+const uploadPostImage = multer( {
     storage,
     limits: {
         fileSize: 1024 * 1024 * 5, // 5MB
@@ -35,4 +35,4 @@ const uploadUserDp = multer( {
     },
 } );
 
-export default uploadUserDp;
+export default uploadPostImage;
