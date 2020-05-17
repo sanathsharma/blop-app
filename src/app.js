@@ -21,7 +21,7 @@ export const app = express();
 
 app.use( compression() ); // compress response
 app.use( morgan( 'dev' ) ); // HTTP request logger middleware
-app.use( '/static', express.static( 'media' ) ); // server media files
+app.use( '/static', express.static( 'media' ) ); // serve media files
 app.use( express.urlencoded( { extended: false } ) );
 app.use( express.json() );
 
