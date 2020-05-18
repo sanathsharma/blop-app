@@ -16,18 +16,21 @@ import User from 'models/user/user.model';
 import UserDp from 'models/user/userDp.model';
 import FavoritePost from 'models/favoritePost.model';
 import PostStatus from 'models/post/postStatus.model';
+import ReadLaterPost from 'models/readLaterPost.model';
 
 // initializations
 // validation schema
-const getFavoritiesReqBodySchema = yup.object().shape( {} ).strict( true ).noUnknown( true, NO_UNKNOWN );
+const reqBodySchema = yup.object().shape( {} ).strict( true ).noUnknown( true, NO_UNKNOWN );
 
-export default [
-    validate( getFavoritiesReqBodySchema ),
+export default ( isFavorities = false ) => [
+    validate( reqBodySchema ),
     async ( req, res, next ) => {
+        const modal = isFavorities ? FavoritePost : ReadLaterPost;
+
         const userId = req.userId;
 
         try {
-            const favoritePosts = await FavoritePost.findAll( {
+            const instances = await modal.findAll( {
                 where: {
                     addedBy: userId,
                     "$post.status.name$": "active"
@@ -63,13 +66,14 @@ export default [
 
             // send response
             sendData( res, {
-                favoritePosts: favoritePosts.map( fav => {
+                [isFavorities ? "favoritePosts" : "readLaterPosts"]: instances.map( instance => {
                     return {
-                        ...fav.toJSON(),
-                        post: pick( fav.post, ['id', 'title', 'createdAt', 'author'] )
+                        ...instance.toJSON(),
+                        post: pick( instance.post, ['id', 'title', 'createdAt', 'author'] )
                     };
                 } )
             } );
+
         } catch ( e ) {
             next( e );
         }

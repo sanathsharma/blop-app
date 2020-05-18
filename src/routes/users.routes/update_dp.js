@@ -3,7 +3,6 @@
 import * as yup from 'yup';
 
 // middlewares
-import { checkAuth } from "isAuth";
 import validate from "middleware/validate-req-body";
 
 // utils
@@ -22,7 +21,6 @@ import UserStatus from "models/user/userStatus.model";
 const updateDpReqBody = yup.object().shape( {} ).strict( true ).noUnknown( true, NO_UNKNOWN );
 
 export default [
-    checkAuth,
     uploadUserDp.single( 'file' ),
     // for multer to parse formData and place req.body, so that it can be validated
     // for unwanted data except file, which is validated in multer upload function defination

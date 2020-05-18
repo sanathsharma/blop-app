@@ -3,7 +3,6 @@
 import * as yup from 'yup';
 
 // middlewares
-import { checkAuth } from "isAuth";
 import validate from "middleware/validate-req-body";
 
 // utils
@@ -20,7 +19,6 @@ import UserStatus from "models/user/userStatus.model";
 const deactivateUserReqBody = yup.object().shape( {} ).strict( true ).noUnknown( true, NO_UNKNOWN );
 
 export default [
-    checkAuth,
     validate( deactivateUserReqBody ),
     async ( req, res, next ) => {
         const userId = req['userId'];

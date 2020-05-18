@@ -52,6 +52,7 @@ export default [
 
             // send response
             sendData( res, { post: post.toJSON() } );
+
         } catch ( e ) {
             next( e );
         }

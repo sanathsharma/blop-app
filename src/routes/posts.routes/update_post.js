@@ -100,6 +100,7 @@ export default [
 
             // if image not changed / created
             else sendMessage( res, "Post Updated" );
+
         } catch ( e ) {
             next( e );
         }

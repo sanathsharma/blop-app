@@ -3,7 +3,6 @@
 import * as yup from 'yup';
 
 // middlewares
-import { checkAuth } from "isAuth";
 import validate from "middleware/validate-req-body";
 
 // utils
@@ -22,7 +21,6 @@ const getUserReqBodySchema = yup.object().shape( {
 } ).strict( true ).noUnknown( true, NO_UNKNOWN );
 
 export default [
-    checkAuth,
     validate( getUserReqBodySchema ),
     async ( req, res, next ) => {
         const { userId } = req['validatedBody'];

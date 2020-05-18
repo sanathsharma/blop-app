@@ -13,16 +13,19 @@ import { sendError, sendMessage } from 'utils/response';
 import Post from 'models/post/post.model';
 import FavoritePost from 'models/favoritePost.model';
 import PostStatus from 'models/post/postStatus.model';
+import ReadLaterPost from 'models/readLaterPost.model';
 
 // initializations
 // validation schema
-const addToFavoritiesReqBodySchema = yup.object().shape( {
+const reqBodySchema = yup.object().shape( {
     postId: yup.number().positive().integer().required( "postId is required" )
 } ).strict( true ).noUnknown( true, NO_UNKNOWN );
 
-export default [
-    validate( addToFavoritiesReqBodySchema ),
+export default ( isFavorities = false ) => [
+    validate( reqBodySchema ),
     async ( req, res, next ) => {
+        const model = isFavorities ? FavoritePost : ReadLaterPost;
+
         const { postId } = req.validatedBody;
         const userId = req.userId;
 
@@ -43,7 +46,7 @@ export default [
             if ( !post ) return sendError( res, "Post not found", "Post not found" );
 
             // check if post is favorites for the user or create
-            const [favoritePost, created] = await FavoritePost.findOrCreate( {
+            const [instance, created] = await model.findOrCreate( {
                 where: {
                     postId,
                     addedBy: userId
@@ -55,10 +58,14 @@ export default [
             } );
 
             // if created now
-            if ( created ) return sendMessage( res, "Added to favorites" );
+            if ( created ) return sendMessage( res,
+                isFavorities ? "Added to favorites" : "Added to Read Later"
+            );
 
             // if created before
-            sendMessage( res, "Post already in favorites" );
+            sendMessage( res,
+                isFavorities ? "Post already in favorites" : "Post already in read later"
+            );
 
         } catch ( e ) {
             next( e );

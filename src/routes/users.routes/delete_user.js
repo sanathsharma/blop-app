@@ -3,7 +3,6 @@
 import * as yup from 'yup';
 
 // middlewares
-import { checkAuth } from "isAuth";
 import validate from "middleware/validate-req-body";
 
 // utils
@@ -18,7 +17,7 @@ import User from "models/user/user.model";
 const deleteUserReqBody = yup.object().shape( {} ).strict( true ).noUnknown( true, NO_UNKNOWN );
 
 export default [
-    checkAuth, validate( deleteUserReqBody ),
+    validate( deleteUserReqBody ),
     ( req, res, next ) => {
         const userId = req['userId'];
 

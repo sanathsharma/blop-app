@@ -3,7 +3,6 @@
 import * as yup from 'yup';
 
 // middlewares
-import { checkAuth } from "isAuth";
 import validate from "middleware/validate-req-body";
 
 // utils
@@ -25,7 +24,7 @@ const updateUserReqBody = yup.object().shape( {
 } ).strict( true ).noUnknown( true, NO_UNKNOWN );
 
 export default [
-    checkAuth, validate( updateUserReqBody ),
+    validate( updateUserReqBody ),
     async ( req, res, next ) => {
         const allowedUpdates = ['password', 'firstName', 'lastName', 'bio'];
         const userId = req['userId'];

@@ -1,4 +1,5 @@
 // ------------------------------ imports -----------------------------
+
 import express from 'express';
 
 // middlewares
@@ -23,7 +24,7 @@ app.use( compression() ); // compress response
 app.use( morgan( 'dev' ) ); // HTTP request logger middleware
 app.use( '/static', express.static( 'media' ) ); // serve media files
 app.use( express.urlencoded( { extended: false } ) );
-app.use( express.json() );
+app.use( express.json() ); // body parsing
 
 // ----------------------------- set headers --------------------------
 
@@ -35,7 +36,7 @@ app.use( cors( {
 } ) );
 
 app.use( ( req, res, next ) => {
-    res.removeHeader( 'X-Powered-By' );
+    res.removeHeader( 'X-Powered-By' ); // to not let the client side know about backend technologies
     next();
 } );
 

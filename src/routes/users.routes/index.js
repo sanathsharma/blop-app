@@ -3,6 +3,8 @@ import express from 'express';
 
 // vendors
 // middlewares
+import { checkAuth } from 'isAuth';
+
 // utils
 // api logic
 import get_users from './get_users';
@@ -20,9 +22,12 @@ const router = express.Router();
 
 // ---------------------------- routes --------------------------
 
-router.post( '/get_users', get_users );
 router.post( '/login', login );
 router.post( '/signup', signup );
+
+router.use( checkAuth );
+
+router.post( '/get_users', get_users );
 router.post( "/get_user", get_user );
 router.post( "/update_user", update_user );
 router.post( "/deactivate_user", deactivate_user );
