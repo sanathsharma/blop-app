@@ -5,10 +5,13 @@ const validate = ( schema ) => async ( req, res, next ) => {
         req.validatedBody = await yupValidate( schema, req.body );
         next();
     } catch ( e ) {
+        const message = "Something went wrong";
+        const isProduction = process.env.NODE_ENV === "production";
+
         res.status( 200 ).json( {
             status: "error",
-            message: "Invalid Request",
-            error: e
+            message: isProduction ? message : "Invalid Request",
+            error: isProduction ? { message } : e
         } );
     }
 };

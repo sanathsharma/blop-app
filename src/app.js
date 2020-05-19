@@ -13,6 +13,7 @@ import isAuth from './middleware/is-auth';
 //routers
 import userRoutes from './routes/users.routes';
 import postRoutes from './routes/posts.routes';
+import commentRoutes from './routes/comments.routes';
 
 // ------------------------- create express app ----------------------
 
@@ -20,9 +21,8 @@ export const app = express();
 
 // -------------------------- other middleware -----------------------
 
-app.use( compression() ); // compress response
+app.use( compression( { threshold: 0 } ) ); // compress response
 app.use( morgan( 'dev' ) ); // HTTP request logger middleware
-app.use( '/static', express.static( 'media' ) ); // serve media files
 app.use( express.urlencoded( { extended: false } ) );
 app.use( express.json() ); // body parsing
 
@@ -44,10 +44,18 @@ app.use( ( req, res, next ) => {
 
 app.use( isAuth );
 
+// ------------------------- serving static files ------------------------
+
+/** have public, private saperate folders and perform checkAuth,
+ *  for private if authentication is needed for access 
+ */
+app.use( '/static', express.static( 'media' ) ); // serve media files
+
 // ------------------------------- urls -----------------------------------
 
 app.use( '/api/users', userRoutes );
 app.use( '/api/posts', postRoutes );
+app.use( '/api/comments', commentRoutes );
 
 // ---------- handle errors that make past all the routes -------------
 
@@ -57,6 +65,7 @@ app.use( ( req, res, next ) => {
 } );
 
 app.use( ( error, req, res, next ) => {
+    console.log( "---- SERVER ERROR ----\n", error );
     res
         .status( 200 )
         .json( {

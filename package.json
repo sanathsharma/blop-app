@@ -6,6 +6,7 @@
   "scripts": {
     "start": "nodemon src/index.js --ext js,graphql --exec babel-node",
     "debug": "nodemon --inspect src/index.js --ext js,graphql --exec babel-node",
+    "compression:debug": "DEBUG=compression npm start",
     "clean": "rm -rf build && mkdir build",
     "build-server": "babel -d ./build ./src -s",
     "build": "npm run clean && npm run build-server",

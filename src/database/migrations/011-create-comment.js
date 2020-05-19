@@ -38,6 +38,26 @@ module.exports = {
                 },
                 onDelete: "CASCADE",
                 onUpdate: "CASCADE"
+            },
+            parentId: {
+                allowNull: true,
+                type: INTEGER,
+                references: {
+                    model: "Comments",
+                    key: "id"
+                },
+                onDelete: "CASCADE",
+                onUpdate: "CASCADE"
+            },
+            statusId: {
+                allowNull: false,
+                type: INTEGER,
+                references: {
+                    model: "CommentStatuses",
+                    key: "id"
+                },
+                onDelete: "CASCADE",
+                onUpdate: "CASCADE"
             }
         } );
     },
