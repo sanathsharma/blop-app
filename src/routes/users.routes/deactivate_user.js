@@ -38,7 +38,7 @@ export default [
             } );
 
             // deactivate account by seting statisId to inactive status id
-            user.setStatus( status );
+            await user.setStatus( status );
 
             // send success response
             sendMessage( res, "Account Deactivated" );

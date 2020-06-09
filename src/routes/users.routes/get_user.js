@@ -17,7 +17,7 @@ import UserStatus from "models/user/userStatus.model";
 // initializations
 // validation schema
 const getUserReqBodySchema = yup.object().shape( {
-    userId: yup.number().required( "userId is required" )
+    userId: yup.number().positive().integer().required( "userId is required" )
 } ).strict( true ).noUnknown( true, NO_UNKNOWN );
 
 export default [
@@ -27,6 +27,9 @@ export default [
 
         try {
             const user = await User.findByPk( userId, {
+                attributes: {
+                    exclude: ['dpId', 'statusId', 'password']
+                },
                 include: [
                     {
                         model: UserStatus,

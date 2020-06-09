@@ -56,6 +56,7 @@ export default [
                 attributes: ['id', "emailId", "firstName", "lastName", "bio", "statusId", "dpId"]
             } );
 
+            // todo: send verification link
             sendData( res, { newUser: newUser.get() } );
 
         } catch ( e ) {

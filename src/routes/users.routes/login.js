@@ -23,7 +23,7 @@ import UserStatus from "models/user/userStatus.model";
 const loginReqBodySchema = yup.object().shape( {
     emailId: yup.string().trim().email().required( "emailId is required" ),
     password: yup.string().trim().min( 8, "password should have minimum of 8 characters" ).required( "password is required" )
-} ).noUnknown( true, NO_UNKNOWN );
+} ).strict( true ).noUnknown( true, NO_UNKNOWN );
 
 export default [
     validate( loginReqBodySchema ),
@@ -41,7 +41,7 @@ export default [
                     },
                     {
                         model: UserDp,
-                        attributes: ["url", "createdAt"],
+                        attributes: ["url"],
                         as: "dp"
                     }
                 ]
@@ -68,8 +68,9 @@ export default [
                 process.env.JWT_SECRET,
                 { expiresIn: '1h' }
             );
+
             sendData( res, {
-                user: pick( user, ["id", "emailId"] ),
+                user: pick( user, ["id", "emailId", "firstName", "lastName", "dp"] ),
                 token,
                 tokenExpiration: 1
             }, "Logged In" );
