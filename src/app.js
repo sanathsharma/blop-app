@@ -7,8 +7,8 @@ import morgan from 'morgan'; // HTTP request logger middleware
 import compression from 'compression';
 import cors from 'cors';
 
-// custom middlewares
-import isAuth from './middleware/is-auth';
+// middlewares
+import { isAuth, errorHandler, PathNotFoundError } from '@ssbdev/common';
 
 //routers
 import userRoutes from './routes/users.routes';
@@ -42,7 +42,20 @@ app.use( ( req, res, next ) => {
 
 // ------------------------ jwt auth middleware -----------------------
 
-app.use( isAuth );
+app.use( isAuth( {
+    tokenIn: "Authorization",
+    barer: true
+} ) );
+
+// ----------------- initialize validatedBody & params ----------------
+
+app.use( ( req, res, next ) => {
+    req.validated = {
+        body: {},
+        params: {}
+    };
+    next();
+} );
 
 // ------------------------- serving static files ------------------------
 
@@ -59,21 +72,8 @@ app.use( '/api/comments', commentRoutes );
 
 // ---------- handle errors that make past all the routes -------------
 
-app.use( ( req, res, next ) => {
-    const error = new Error( 'Not Found' );
-    next( error );
-} );
+app.use( ( req, res, next ) => next( new PathNotFoundError() ) );
 
-app.use( ( error, req, res, next ) => {
-    console.log( "---- SERVER ERROR ----\n", error );
-    res
-        .status( 200 )
-        .json( {
-            status: "error",
-            message: "Server Error",
-            error: {
-                type: error.name,
-                message: error.message
-            }
-        } );
-} );
+// ----------------- error handling middleware ---------- --------------
+
+app.use( errorHandler );

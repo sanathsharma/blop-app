@@ -3,15 +3,12 @@
 import * as yup from 'yup';
 
 // middlewares
-import validate from "middleware/validate-req-body";
-
 // utils
-import message from "utils/message";
-import { NO_UNKNOWN } from "utils/constants";
-import { sendError, sendData, sendServerError } from "utils/response";
-
 // models
 import UserStatus from "models/user/userStatus.model";
+
+// common lib
+import { NO_UNKNOWN, validate, sendData, ServerError, BadRequestError } from '@ssbdev/common';
 
 // initializations
 // validation schema
@@ -26,7 +23,7 @@ const signUpReqBodySchema = yup.object().shape( {
 export default [
     validate( signUpReqBodySchema ),
     async ( req, res, next ) => {
-        const { emailId, password, firstName, lastName, bio } = req['validatedBody'];
+        const { emailId, password, firstName, lastName, bio } = req.validated.body;
 
         try {
             // get status active record
@@ -35,10 +32,7 @@ export default [
             } );
 
             // if active status not found in db
-            if ( !status ) return sendError( res,
-                message( "Something went wrong", "\"active\" status not found in database" ),
-                "Could not signup"
-            );
+            if ( !status ) throw new ServerError( "\"active\" status not found", "Could not signup" );
 
             // get users with active status to check if the user already exists
             const users = await status.getUsers( {
@@ -46,10 +40,7 @@ export default [
             } );
 
             // send error if user with same email exists
-            if ( users.length > 0 ) return sendError( res,
-                message( "Could not sign you up", "Conflict" ),
-                message( "Something went wrong", "User already exists" )
-            );
+            if ( users.length > 0 ) throw new BadRequestError( "User already exists", "Could not signup" );
 
             // create new user with status active
             const newUser = await status.createUser( { emailId, password, firstName, lastName, bio }, {

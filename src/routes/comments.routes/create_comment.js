@@ -2,13 +2,11 @@
 // vendors
 import *  as yup from 'yup';
 
-// middlewares
-import validate from 'middleware/validate-req-body';
+// common lib
+import { validate, sendData, NO_UNKNOWN, BadRequestError, ServerError } from '@ssbdev/common';
 
 // utils
-import message from 'utils/message';
-import { sendError, sendData } from 'utils/response';
-import { COMMENT_DESC_MAX_CHAR, NO_UNKNOWN } from 'utils/constants';
+import { COMMENT_DESC_MAX_CHAR } from 'constants/others.constants';
 
 // models
 import Post from 'models/post/post.model';
@@ -26,7 +24,7 @@ const createCommentReqBodySchema = yup.object().shape( {
 export default [
     validate( createCommentReqBodySchema ),
     async ( req, res, next ) => {
-        const { postId, description, parent = null } = req.validatedBody;
+        const { postId, description, parent = null } = req.validated.body;
         const userId = req.userId;
 
         try {
@@ -45,10 +43,7 @@ export default [
             } );
 
             // if post not found
-            if ( !post ) return sendError( res,
-                message( "Could not create comment", "Post not found" ),
-                message( "Could not create comment", "Post not found" )
-            );
+            if ( !post ) throw new BadRequestError( "Post not found", "Could not create comment" );
 
             // find active comment status 
             const commentStatus = await CommentStatus.findOne( {
@@ -58,10 +53,7 @@ export default [
             } );
 
             // if status not found
-            if ( !commentStatus ) return sendError( res,
-                message( "Could not create comment", "Active comment status not found" ),
-                message( "Could not create comment", "Active comment status not found" )
-            );
+            if ( !commentStatus ) throw new ServerError( "Active comment status not found", "Could not create comment" );
 
             // create comment
             const newComment = await post.createComment( {

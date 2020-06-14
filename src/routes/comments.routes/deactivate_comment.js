@@ -2,13 +2,8 @@
 // vendors
 import * as yup from 'yup';
 
-// middlewares
-import validate from 'middleware/validate-req-body';
-
-// utils
-import message from 'utils/message';
-import { NO_UNKNOWN } from 'utils/constants';
-import { sendError, sendMessage } from 'utils/response';
+// common lib
+import { NO_UNKNOWN, validate, sendMessage, BadRequestError, ServerError } from '@ssbdev/common';
 
 // models
 import Comment from 'models/comment.model';
@@ -23,7 +18,7 @@ const deactivateCommentReqBodySchema = yup.object().shape( {
 export default [
     validate( deactivateCommentReqBodySchema ),
     async ( req, res, next ) => {
-        const { commentId } = req.validatedBody;
+        const { commentId } = req.validated.body;
         const userId = req.userId;
 
         try {
@@ -42,10 +37,10 @@ export default [
             } );
 
             // if comment not found
-            if ( !comment ) return sendError( res,
-                message( "Comment Deleted", "Comment not found / already deactivated" ),
-                message( "Comment Deleted", "Comment not found / already deactivated" )
-            );
+            if ( !comment ) {
+                if ( process.env.NODE_ENV !== "development" ) return sendMessage( res, "Comment Deleted" );
+                throw new BadRequestError( "Comment not found / already deactivated" );
+            }
 
             // find inactive comment status
             const commentStatus = await CommentStatus.findOne( {
@@ -55,10 +50,10 @@ export default [
             } );
 
             // if comment inactive status not found
-            if ( !commentStatus ) return sendError( res,
-                message( "Comment Deleted", "Inactive comment status not found" ),
-                message( "Comment Deleted", "Inactive comment status not found" )
-            );
+            if ( !commentStatus ) {
+                if ( process.env.NODE_ENV !== "development" ) return sendMessage( res, "Comment Deleted" );
+                throw new ServerError( "Inactive comment status not found" );
+            }
 
             // deactivate comment 
             await comment.setStatus( commentStatus.id );

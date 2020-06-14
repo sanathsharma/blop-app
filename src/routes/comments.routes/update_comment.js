@@ -4,12 +4,12 @@ import * as yup from 'yup';
 
 // middlewares
 // utils
-import { COMMENT_DESC_MAX_CHAR, NO_UNKNOWN } from 'utils/constants';
-import validate from 'middleware/validate-req-body';
+import { COMMENT_DESC_MAX_CHAR } from 'constants/others.constants';
 import CommentStatus from 'models/commentStatus.model';
-import { sendError, sendMessage } from 'utils/response';
-import message from 'utils/message';
 import Comment from 'models/comment.model';
+
+// common lib
+import { NO_UNKNOWN, validate, sendMessage, BadRequestError } from '@ssbdev/common';
 
 // models
 // initializations
@@ -22,7 +22,7 @@ const updateCommentReqBodySchema = yup.object().shape( {
 export default [
     validate( updateCommentReqBodySchema ),
     async ( req, res, next ) => {
-        const { commentId, description } = req.validatedBody;
+        const { commentId, description } = req.validated.body;
         const userId = req.userId;
 
         try {
@@ -41,10 +41,7 @@ export default [
             } );
 
             // if comment not found
-            if ( !comment ) return sendError( res,
-                message( "Could not update comment", "Comment not found / already deactivated" ),
-                message( "Could not update comment", "Comment not found / already deactivated" )
-            );
+            if ( !comment ) throw new BadRequestError( "Comment not found / already deactivated", "Could not update comment" );
 
             // update comment
             comment.description = description;

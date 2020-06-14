@@ -4,16 +4,14 @@ import { pick } from "lodash";
 import * as yup from 'yup';
 
 // middlewares
-import validate from "middleware/validate-req-body";
-
 // utils
-import { NO_UNKNOWN } from "utils/constants";
-import { sendData, sendServerError } from "utils/response";
-
 // models
 import User from "models/user/user.model";
 import UserDp from "models/user/userDp.model";
 import UserStatus from "models/user/userStatus.model";
+
+// common lib
+import { NO_UNKNOWN, validate, sendData } from "@ssbdev/common";
 
 // initializations
 // validation schema
@@ -21,9 +19,9 @@ const getUsersReqBody = yup.object().shape( {} ).strict( true ).noUnknown( true,
 
 export default [
     validate( getUsersReqBody ),
-    ( req, res, next ) => {
-        User
-            .findAll( {
+    async ( req, res, next ) => {
+        try {
+            const users = await User.findAll( {
                 where: { "$status.name$": "active" },
                 attributes: ["id", "emailId", "firstName"],
                 include: [
@@ -38,10 +36,13 @@ export default [
                         as: "dp"
                     }
                 ]
-            } )
-            .then( users => sendData( res, {
+            } );
+
+            sendData( res, {
                 users: users.map( user => pick( user.toJSON(), ["id", "emailId", "firstName", "dp"] ) )
-            } ) )
-            .catch( sendServerError( res ) );
+            } );
+        } catch ( e ) {
+            next( e );
+        }
     }
 ]; 

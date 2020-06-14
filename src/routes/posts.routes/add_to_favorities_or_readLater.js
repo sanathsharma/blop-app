@@ -3,17 +3,15 @@
 import * as yup from 'yup';
 
 // middlewares
-import validate from 'middleware/validate-req-body';
-
 // utils
-import { NO_UNKNOWN } from 'utils/constants';
-import { sendError, sendMessage } from 'utils/response';
-
 // models
 import Post from 'models/post/post.model';
 import FavoritePost from 'models/favoritePost.model';
 import PostStatus from 'models/post/postStatus.model';
 import ReadLaterPost from 'models/readLaterPost.model';
+
+// common lib
+import { NO_UNKNOWN, validate, sendMessage, NotFoundError } from '@ssbdev/common';
 
 // initializations
 // validation schema
@@ -26,7 +24,7 @@ export default ( isFavorities = false ) => [
     async ( req, res, next ) => {
         const model = isFavorities ? FavoritePost : ReadLaterPost;
 
-        const { postId } = req.validatedBody;
+        const { postId } = req.validated.body;
         const userId = req.userId;
 
         try {
@@ -43,7 +41,7 @@ export default ( isFavorities = false ) => [
             } );
 
             // if post not found
-            if ( !post ) return sendError( res, "Post not found", "Post not found" );
+            if ( !post ) throw new NotFoundError( "Post not found" );
 
             // check if post is favorites for the user or create
             const [instance, created] = await model.findOrCreate( {

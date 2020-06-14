@@ -6,17 +6,14 @@ import { sign } from "jsonwebtoken";
 import * as yup from 'yup';
 
 // middlewares
-import validate from "middleware/validate-req-body";
-
 // utils
-import message from "utils/message";
-import { NO_UNKNOWN } from "utils/constants";
-import { sendError, sendData, sendServerError } from "utils/response";
-
 // models
 import User from "models/user/user.model";
 import UserDp from "models/user/userDp.model";
 import UserStatus from "models/user/userStatus.model";
+
+// common lib
+import { NO_UNKNOWN, validate, sendData, AuthenticationFailedError, UnauthorizedError } from "@ssbdev/common";
 
 // initializations
 // validation schema
@@ -28,7 +25,7 @@ const loginReqBodySchema = yup.object().shape( {
 export default [
     validate( loginReqBodySchema ),
     async ( req, res, next ) => {
-        const { emailId, password } = req['validatedBody'];
+        const { emailId, password } = req.validated.body;
 
         try {
             const user = await User.findOne( {
@@ -48,19 +45,13 @@ export default [
             } );
 
             // if user not found
-            if ( !user ) return sendError( res,
-                message( 'Unauthorized', 'User not found' ),
-                'Authentication Failed'
-            );
+            if ( !user ) throw new UnauthorizedError( 'User not found' );
 
             // check password match
             const match = await compare( password, user.password );
 
             // if password did not match
-            if ( !match ) return sendError( res,
-                message( 'Unauthorized', 'Wrong password' ),
-                'Authentication Failed'
-            );
+            if ( !match ) throw new UnauthorizedError( 'Wrong password' );
 
             // create token and send response on password match
             const token = sign(

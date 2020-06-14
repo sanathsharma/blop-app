@@ -4,16 +4,13 @@
 import * as yup from 'yup';
 
 // middlewares
-import validate from "middleware/validate-req-body";
-
 // utils
-import message from "utils/message";
-import { NO_UNKNOWN } from "utils/constants";
-import { sendError, sendServerError, sendMessage } from "utils/response";
-
 // models
 import User from "models/user/user.model";
 import UserStatus from "models/user/userStatus.model";
+
+// common lib
+import { NO_UNKNOWN, validate, sendMessage, UnauthorizedError } from '@ssbdev/common';
 
 // initializations
 // validation schema
@@ -39,11 +36,7 @@ export default [
             } );
 
             // if user not found
-            if ( !user ) return sendError(
-                res,
-                message( 'Unauthorized', 'User not found' ),
-                'Unauthorized'
-            );
+            if ( !user ) throw new UnauthorizedError( 'User not found' );
 
             // create new dp
             await user.setDp( null );

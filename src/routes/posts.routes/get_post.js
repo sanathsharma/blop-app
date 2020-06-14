@@ -3,14 +3,7 @@
 import * as yup from 'yup';
 
 // middlewares
-import validate from 'middleware/validate-req-body';
-
 // utils
-import exclude from 'utils/exclude';
-import message from 'utils/message';
-import { NO_UNKNOWN } from 'utils/constants';
-import { sendData, sendError } from 'utils/response';
-
 // models
 import Post from 'models/post/post.model';
 import User from 'models/user/user.model';
@@ -19,6 +12,9 @@ import UserDp from 'models/user/userDp.model';
 import PostImage from 'models/post/postImage.model';
 import PostStatus from 'models/post/postStatus.model';
 import CommentStatus from 'models/commentStatus.model';
+
+// common lib
+import { NO_UNKNOWN, validate, sendData, exclude, NotFoundError } from '@ssbdev/common';
 
 // initializations
 // validation schema
@@ -29,7 +25,7 @@ const getPostReqBodySchema = yup.object().shape( {
 export default [
     validate( getPostReqBodySchema ),
     async ( req, res, next ) => {
-        const { postId } = req.validatedBody;
+        const { postId } = req.validated.body;
 
         try {
             const post = await Post.findOne( {
@@ -98,10 +94,7 @@ export default [
                 }
             } );
 
-            if ( !post ) return sendError( res,
-                message( "Could not get post", "Post not found" ),
-                message( "Could not get post", "Post not found" )
-            );
+            if ( !post ) throw new NotFoundError( "Post not found" );
 
             const { status, ...rest } = post.toJSON();
             // send response

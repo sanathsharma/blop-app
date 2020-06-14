@@ -26,8 +26,8 @@
                     "db-config": "./src/database/config/config.js",
                     "models": "./src/database/models",
                     "db": "./src/db.js",
-                    "isAuth": "./src/middleware/is-auth.js",
-                    "utils": "./src/utils"
+                    "utils": "./src/utils",
+                    "app": "./src/app.js"
                 }
             }
         ],

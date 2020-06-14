@@ -2,13 +2,8 @@
 // vendors
 import * as yup from 'yup';
 
-// middlewares
-import validate from 'middleware/validate-req-body';
-
-// utils
-import exclude from 'utils/exclude';
-import { sendData } from 'utils/response';
-import { NO_UNKNOWN } from 'utils/constants';
+// common lib
+import { NO_UNKNOWN, validate, sendData, exclude } from '@ssbdev/common';
 
 // models
 import User from 'models/user/user.model';
@@ -26,7 +21,7 @@ const getCommentsReqBodySchema = yup.object().shape( {
 export default [
     validate( getCommentsReqBodySchema ),
     async ( req, res, next ) => {
-        const { postId, parent } = req.validatedBody;
+        const { postId, parent } = req.validated.body;
 
         const where = {
             postId,

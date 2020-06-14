@@ -30,7 +30,7 @@ module.exports = ( function () {
                 database: "blog-app",
                 host: "localhost",
                 port: "5432",
-                dialect: 'postgres'
+                dialect: 'sqlite::memory'
             };
     }
 } )();

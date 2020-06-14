@@ -3,16 +3,13 @@
 import * as yup from 'yup';
 
 // middlewares
-import validate from 'middleware/validate-req-body';
-
 // utils
-import message from 'utils/message';
-import { NO_UNKNOWN } from 'utils/constants';
-import { sendMessage, sendError } from 'utils/response';
-
 // models
 import Post from 'models/post/post.model';
 import PostStatus from 'models/post/postStatus.model';
+
+// common lib
+import { NO_UNKNOWN, validate, sendMessage, ServerError } from '@ssbdev/common';
 
 // initializations
 // validation schema
@@ -23,7 +20,7 @@ const deletePostReqBody = yup.object().shape( {
 export default [
     validate( deletePostReqBody ),
     async ( req, res, next ) => {
-        const { postId } = req.validatedBody;
+        const { postId } = req.validated.body;
         const userId = req.userId;
 
         try {
@@ -48,10 +45,7 @@ export default [
             const status = await PostStatus.findOne( { where: { name: "inactive" } } );
 
             // if active status not found
-            if ( !status ) return sendError( res,
-                message( "Something went wrong, could not delete post", "'Inactive' status not found" ),
-                message( "Could not delete post", 'No post status active found in db' )
-            );
+            if ( !status ) throw new ServerError( "'Inactive' status not found", "Something went wrong, could not delete post" );
 
             // deactivate post
             await post.setStatus( status.id );

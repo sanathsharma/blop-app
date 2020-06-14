@@ -3,14 +3,12 @@
 import * as yup from 'yup';
 
 // middlewares
-import validate from "middleware/validate-req-body";
-
 // utils
-import { NO_UNKNOWN } from "utils/constants";
-import { sendError, sendMessage, sendServerError } from "utils/response";
-
 // models
 import User from "models/user/user.model";
+
+// commonn lib
+import { NO_UNKNOWN, validate, sendMessage, UnauthorizedError } from '@ssbdev/common';
 
 // initializations
 // validation schema
@@ -28,7 +26,7 @@ export default [
     async ( req, res, next ) => {
         const allowedUpdates = ['password', 'firstName', 'lastName', 'bio'];
         const userId = req['userId'];
-        const { updates } = req['validatedBody'];
+        const { updates } = req.validated.body;
 
         try {
             // find the user
@@ -37,7 +35,7 @@ export default [
             } );
 
             // if user not found
-            if ( !user ) return sendError( res, "Could not update the user info", "User not found" );
+            if ( !user ) throw new UnauthorizedError( "User not found" );
 
             // update the user
             Object.keys( updates ).forEach( key => {
@@ -50,6 +48,7 @@ export default [
 
             // send success respones
             sendMessage( res, "User info updated" );
+
         } catch ( e ) {
             next( e );
         }

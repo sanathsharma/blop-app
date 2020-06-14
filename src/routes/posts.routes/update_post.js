@@ -3,18 +3,16 @@
 import * as yup from 'yup';
 
 // middlewares
-import validate from 'middleware/validate-req-body';
-
 // utils
-import message from 'utils/message';
-import { NO_UNKNOWN } from 'utils/constants';
-import { sendError, sendData, sendMessage } from 'utils/response';
 import uploadPostImage from './postImage_storage.util';
 
 // models
 import Post from 'models/post/post.model';
 import PostImage from 'models/post/postImage.model';
 import PostStatus from 'models/post/postStatus.model';
+
+// common lib
+import { NO_UNKNOWN, validate, sendMessage, sendData, RequestValidationError, NotFoundError } from '@ssbdev/common';
 
 // initializations
 // validation schema (formData)
@@ -28,15 +26,13 @@ export default [
     uploadPostImage.single( 'image' ),
     validate( updatePostReqBody ),
     async ( req, res, next ) => {
-        const { postId, title, description } = req.validatedBody;
+        const { postId, title, description } = req.validated.body;
         const userId = req.userId;
         const image = req.file; // image uploaded
 
         // todo: write helper util for positive integer
-        if ( isNaN( parseInt( postId ) ) ) return sendError( res,
-            message( "Something went wrong, could not update post", "postId invalid" ),
-            message( "Could not update post", "postId invalid" )
-        );
+        // TODO: prodMsg "Something went wrong, could not update post" 
+        if ( isNaN( parseInt( postId ) ) ) throw new RequestValidationError( "postId invalid" );
 
         if ( !title && !description && !image ) return sendMessage( res, "Post upto date" );
 
@@ -63,14 +59,11 @@ export default [
             } );
 
             // if post not found
-            if ( !post ) return sendError( res,
-                message( "Something went wrong, could not update post", "post not found" ),
-                message( "Could not update post", "post not found" )
-            );
+            if ( !post ) throw new NotFoundError( "post not found" );
 
             // update changes on post instance
             allowedUpdates.forEach( key => {
-                if ( req.validatedBody[key] ) post[key] = req.validatedBody[key];
+                if ( req.validated.body[key] ) post[key] = req.validated.body[key];
             } );
 
             let newImage = null;

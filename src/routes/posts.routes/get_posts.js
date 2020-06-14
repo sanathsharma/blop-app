@@ -4,17 +4,13 @@ import * as yup from 'yup';
 import { pick } from 'lodash';
 
 // middlewares
-import validate from "middleware/validate-req-body";
-
 // utils
-import { NO_UNKNOWN } from "utils/constants";
-import { sendData } from "utils/response";
-
 // models
 import Post from "models/post/post.model";
 import PostStatus from "models/post/postStatus.model";
 import User from 'models/user/user.model';
 import UserDp from 'models/user/userDp.model';
+import { NO_UNKNOWN, validate, sendData } from '@ssbdev/common';
 
 // initializations
 // validation schema
@@ -27,7 +23,7 @@ const getPostsReqBodySchema = yup.object().shape( {
 export default [
     validate( getPostsReqBodySchema ),
     async ( req, res, next ) => {
-        const { categoryId, userId } = req.validatedBody;
+        const { categoryId, userId } = req.validated.body;
 
         const where = {
             "$status.name$": "active"

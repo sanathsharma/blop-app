@@ -3,16 +3,13 @@
 import * as yup from 'yup';
 
 // middlewares
-import validate from "middleware/validate-req-body";
-
 // utils
-import message from "utils/message";
-import { NO_UNKNOWN } from 'utils/constants';
-import { sendError, sendMessage, sendServerError } from "utils/response";
-
 // models
 import User from "models/user/user.model";
 import UserStatus from "models/user/userStatus.model";
+
+// common lib
+import { NO_UNKNOWN, validate, sendMessage, BadRequestError } from '@ssbdev/common';
 
 // initializations
 // validation schema
@@ -27,10 +24,7 @@ export default [
             const user = await User.findByPk( userId );
 
             // if user not found
-            if ( !user ) return sendError( res,
-                message( "Something went wrong", "User not found" ),
-                message( "Could not deactivate your account", "User not found" )
-            );
+            if ( !user ) throw new BadRequestError( "User not found", "Something went wrong, could not delete your account" );
 
             // get status inactive record
             const status = await UserStatus.findOne( {

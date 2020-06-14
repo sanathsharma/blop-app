@@ -3,18 +3,16 @@
 import * as yup from 'yup';
 
 // middlewares
-import validate from "middleware/validate-req-body";
-
 // utils
-import message from "utils/message";
 import uploadUserDp from "./dp_storage.util";
-import { NO_UNKNOWN } from "utils/constants";
-import { sendData, sendServerError, sendError } from "utils/response";
 
 // models
 import User from "models/user/user.model";
 import UserDp from "models/user/userDp.model";
 import UserStatus from "models/user/userStatus.model";
+
+// common lib
+import { NO_UNKNOWN, validate, sendData, RequestValidationError, UnauthorizedError } from '@ssbdev/common';
 
 // initializations
 // validation schema
@@ -28,14 +26,10 @@ export default [
     async ( req, res, next ) => {
         const { file, userId } = req; // appended by multer
 
-        // file missing in form data -> mulre upload did not run -> no file key on req
-        if ( !file ) return sendError(
-            res,
-            'File is required',
-            'File is required'
-        );
-
         try {
+            // file missing in form data -> multer upload did not run -> no file key on req
+            if ( !file ) throw new RequestValidationError( 'File is required' );
+
             // get the atcive user by id
             const user = await User.findByPk( userId, {
                 attributes: ['id'],
@@ -55,11 +49,7 @@ export default [
             } );
 
             // if user not found
-            if ( !user ) return sendError(
-                res,
-                message( 'Unauthorized', 'User not found' ),
-                'Unauthorized'
-            );
+            if ( !user ) throw new UnauthorizedError( 'User not found' );
 
             // create new dp
             const dp = await user.createDp( {

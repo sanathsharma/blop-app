@@ -3,16 +3,13 @@
 import * as yup from 'yup';
 
 // middlewares
-import validate from 'middleware/validate-req-body';
-
 // utils
-import message from 'utils/message';
-import { NO_UNKNOWN } from 'utils/constants';
-import { sendError, sendMessage } from 'utils/response';
-
 // models
 import FavoritePost from 'models/favoritePost.model';
 import ReadLaterPost from 'models/readLaterPost.model';
+
+// common lib
+import { NO_UNKNOWN, validate, sendMessage, RequestValidationError, NotFoundError } from '@ssbdev/common';
 
 // initializations
 // validation schema
@@ -34,18 +31,16 @@ export default ( isFavorites = false ) => [
         const messageKey = isFavorites ? "favorities" : "read later";
         const idKey = isFavorites ? "favoritePostId" : "readLaterPostId";
 
-        const { postId } = req.validatedBody;
+        const { postId } = req.validated.body;
         const userId = req.userId;
 
-        if ( !postId && !req.validatedBody[idKey] ) return sendError( res,
-            message( `Something went wrong, could not remove post from ${ messageKey }`, `One of 'postId','${ idKey }' is required` ),
-            message( `Could not remove post from ${ messageKey }`, `One of 'postId','${ idKey }' is required` )
-        );
+        // TODO: prodMsg `Something went wrong, could not remove post from ${ messageKey }`
+        if ( !postId && !req.validated.body[idKey] ) throw new RequestValidationError( `One of 'postId','${ idKey }' is required` );
 
         const where = {};
 
         // find by id
-        if ( req.validatedBody[idKey] ) where.id = req.validatedBody[idKey];
+        if ( req.validated.body[idKey] ) where.id = req.validated.body[idKey];
 
         // find by post id favorited by the user
         else {
@@ -59,10 +54,7 @@ export default ( isFavorites = false ) => [
             } );
 
             // if favoritePost not found
-            if ( !instance ) return sendError( res,
-                message( `Something went wrong, could not remove post from ${ messageKey }`, `Post not found in ${ messageKey }` ),
-                message( `Could not remove post from ${ messageKey }`, `Post not found in ${ messageKey }` )
-            );
+            if ( !instance ) throw new NotFoundError( `Post not found in ${ messageKey }` );
 
             // delete favorited Post
             await instance.destroy();

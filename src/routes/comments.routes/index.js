@@ -3,7 +3,9 @@ import express from 'express';
 
 // vendors
 // middlewares
-import { checkAuth } from 'isAuth';
+
+// common lib
+import { checkAuth } from '@ssbdev/common';
 
 // utils
 // models
@@ -23,10 +25,8 @@ const router = express.Router();
 
 router.use( "/get_comments", get_comments );
 
-router.use( checkAuth );
-
-router.use( "/create_comment", create_comment );
-router.use( "/update_comment", update_comment );
-router.use( "/delete_comment", deactivate_comment );
+router.use( "/create_comment", checkAuth, create_comment );
+router.use( "/update_comment", checkAuth, update_comment );
+router.use( "/delete_comment", checkAuth, deactivate_comment );
 
 export default router;

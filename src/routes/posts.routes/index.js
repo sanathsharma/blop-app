@@ -3,7 +3,7 @@ import express from 'express';
 
 // vendors
 // middlewares
-import { checkAuth } from 'isAuth';
+import { checkAuth } from '@ssbdev/common';
 
 // utils
 // models
@@ -27,18 +27,17 @@ const router = express.Router();
 router.post( "/get_posts", get_posts );
 router.post( "/get_post", get_post );
 
-router.use( checkAuth );
 
-router.post( "/create_post", create_post );
-router.post( "/update_post", update_post );
-router.post( "/delete_post", deactivate_post );
+router.post( "/create_post", checkAuth, create_post );
+router.post( "/update_post", checkAuth, update_post );
+router.post( "/delete_post", checkAuth, deactivate_post );
 
-router.post( "/get_favorities", get_favorities_or_readLater( true ) );
-router.post( "/add_to_favorities", add_to_favorities_or_readLater( true ) );
-router.post( "/remove_from_favorities", remove_from_favorities_or_readLater( true ) );
+router.post( "/get_favorities", checkAuth, get_favorities_or_readLater( true ) );
+router.post( "/add_to_favorities", checkAuth, add_to_favorities_or_readLater( true ) );
+router.post( "/remove_from_favorities", checkAuth, remove_from_favorities_or_readLater( true ) );
 
-router.post( "/get_readlater", get_favorities_or_readLater() );
-router.post( "/add_to_readlater", add_to_favorities_or_readLater() );
-router.post( "/remove_from_readlater", remove_from_favorities_or_readLater() );
+router.post( "/get_readlater", checkAuth, get_favorities_or_readLater() );
+router.post( "/add_to_readlater", checkAuth, add_to_favorities_or_readLater() );
+router.post( "/remove_from_readlater", checkAuth, remove_from_favorities_or_readLater() );
 
 export default router;

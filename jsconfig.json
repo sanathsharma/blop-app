@@ -15,9 +15,6 @@
             ],
             "db": [
                 "db.js"
-            ],
-            "isAuth": [
-                "middleware/is-auth.js"
             ]
         }
     }

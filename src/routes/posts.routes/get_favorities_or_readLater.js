@@ -4,12 +4,7 @@ import * as yup from 'yup';
 import { pick } from 'lodash';
 
 // middlewares
-import validate from 'middleware/validate-req-body';
-
 // utils
-import { sendData } from 'utils/response';
-import { NO_UNKNOWN } from 'utils/constants';
-
 // models
 import Post from 'models/post/post.model';
 import User from 'models/user/user.model';
@@ -17,6 +12,9 @@ import UserDp from 'models/user/userDp.model';
 import FavoritePost from 'models/favoritePost.model';
 import PostStatus from 'models/post/postStatus.model';
 import ReadLaterPost from 'models/readLaterPost.model';
+
+// common lib
+import { NO_UNKNOWN, validate, sendData } from '@ssbdev/common';
 
 // initializations
 // validation schema
