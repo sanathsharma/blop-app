@@ -3,11 +3,12 @@
 import * as yup from 'yup';
 
 // middlewares
+import statusCache from 'middleware/statusCache';
+
 // utils
 // models
 import Post from 'models/post/post.model';
 import FavoritePost from 'models/favoritePost.model';
-import PostStatus from 'models/post/postStatus.model';
 import ReadLaterPost from 'models/readLaterPost.model';
 
 // common lib
@@ -21,23 +22,19 @@ const reqBodySchema = yup.object().shape( {
 
 export default ( isFavorities = false ) => [
     validate( reqBodySchema ),
+    statusCache( "post" ),
     async ( req, res, next ) => {
         const model = isFavorities ? FavoritePost : ReadLaterPost;
 
         const { postId } = req.validated.body;
-        const userId = req.userId;
+        const { userId, POSTSTATUS } = req;
 
         try {
             const post = await Post.findOne( {
                 where: {
                     id: postId,
-                    "$status.name$": "active"
-                },
-                include: [{
-                    model: PostStatus,
-                    attributes: ['name'],
-                    as: "status"
-                }]
+                    statusId: POSTSTATUS.ACTIVE
+                }
             } );
 
             // if post not found

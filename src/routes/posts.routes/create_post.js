@@ -3,13 +3,14 @@
 import * as yup from 'yup';
 
 // middlewares
+import statusCache from 'middleware/statusCache';
+
 // utils
 // models
 import Category from 'models/category.model';
-import PostStatus from 'models/post/postStatus.model';
 
 // common lib
-import { NO_UNKNOWN, validate, sendData, BadRequestError, ServerError } from '@ssbdev/common';
+import { NO_UNKNOWN, validate, sendData, BadRequestError } from '@ssbdev/common';
 
 // initializations
 // validation schema
@@ -22,9 +23,10 @@ const createPostReqBody = yup.object().shape( {
 // todo: add image
 export default [
     validate( createPostReqBody ),
+    statusCache( "post" ),
     async ( req, res, next ) => {
         const { title, description, categoryId } = req.validated.body;
-        const userId = req.userId;
+        const { userId, POSTSTATUS } = req;
 
         try {
             const category = await Category.findByPk( categoryId );
@@ -32,14 +34,13 @@ export default [
             // if category does not exists
             if ( !category ) throw new BadRequestError( 'Category not found', "Something went wrong, could not create post" );
 
-            // find active status id
-            const status = await PostStatus.findOne( { where: { name: "active" } } );
-
-            // if active status not found
-            if ( !status ) throw new ServerError( '"Active" status not found', "Something went wrong, could not create post" );
-
             // create post
-            const post = await category.createPost( { title, description, statusId: status.id, addedBy: userId } );
+            const post = await category.createPost( {
+                title,
+                description,
+                statusId: POSTSTATUS.ACTIVE,
+                addedBy: userId
+            } );
 
             // send response
             sendData( res, { post: post.toJSON() } );

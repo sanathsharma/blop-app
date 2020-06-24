@@ -3,13 +3,14 @@
 import * as yup from 'yup';
 
 // middlewares
+import statusCache from 'middleware/statusCache';
+
 // utils
 import uploadUserDp from "./dp_storage.util";
 
 // models
 import User from "models/user/user.model";
 import UserDp from "models/user/userDp.model";
-import UserStatus from "models/user/userStatus.model";
 
 // common lib
 import { NO_UNKNOWN, validate, sendData, RequestValidationError, UnauthorizedError } from '@ssbdev/common';
@@ -23,8 +24,10 @@ export default [
     // for multer to parse formData and place req.body, so that it can be validated
     // for unwanted data except file, which is validated in multer upload function defination
     validate( updateDpReqBody ),
+    statusCache(),
     async ( req, res, next ) => {
         const { file, userId } = req; // appended by multer
+        const { USERSTATUS } = req;
 
         try {
             // file missing in form data -> multer upload did not run -> no file key on req
@@ -33,13 +36,8 @@ export default [
             // get the atcive user by id
             const user = await User.findByPk( userId, {
                 attributes: ['id'],
-                where: { '$status.name$': 'active' },
+                where: { statusId: USERSTATUS.ACTIVE },
                 include: [
-                    {
-                        model: UserStatus,
-                        attributes: ['name', 'id'],
-                        as: 'status'
-                    },
                     {
                         model: UserDp,
                         attributes: ['id', 'url'],
@@ -52,6 +50,7 @@ export default [
             if ( !user ) throw new UnauthorizedError( 'User not found' );
 
             // create new dp
+            // TODO: update if already exists
             const dp = await user.createDp( {
                 url: `user_dp/${ file.filename }`
             } );

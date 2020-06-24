@@ -1,23 +1,55 @@
 import db from 'db';
-import userStatusSeed from 'database/seeders/002-userStatus';
+import userStatusSeed from 'database/seeders/001-userStatus';
 import postStatusSeed from 'database/seeders/003-postStatus';
 import categoriesSeed from 'database/seeders/004-category';
+import User from 'models/user/user.model';
+import jwt from 'jsonwebtoken';
+import { redisclient } from 'cache';
 
-beforeAll( () => {
+beforeAll( async () => {
     // start db connection
-    db.authenticate();
+    await db.authenticate();
 } );
 
 beforeEach( async () => {
     // wipe the db clean
     await db.sync( { force: true } );
-    const qi = db.getQueryInterface();
+
+    // seed few tables
+    const qi = await db.getQueryInterface();
+
     userStatusSeed.up( qi, db.Sequelize );
     postStatusSeed.up( qi, db.Sequelize );
     categoriesSeed.up( qi, db.Sequelize );
 } );
 
-afterAll( () => {
+afterAll( async () => {
     // close db connection
-    db.close();
+    await db.close();
+
+    // close redis
+    redisclient.FLUSHALL( () => {
+        redisclient.quit();
+    } );
 } );
+
+// -----------------------------------------------------------------------------------
+
+global.generateToken = ( userId, emailId ) => {
+    return jwt.sign( { userId, email: emailId }, process.env.JWT_SECRET );
+};
+
+global.signup = async ( emailId ) => {
+    emailId = emailId ?? "test@g.com";
+    const password = "password";
+
+    const user = await User.create( { emailId, password, statusId: 1, firstName: "test" } );
+    const token = global.generateToken( user.id, emailId );
+
+    return {
+        token,
+        emailId,
+        password,
+        userId: user.id
+    };
+};

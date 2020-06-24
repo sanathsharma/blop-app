@@ -11,6 +11,7 @@ import PostStatus from "models/post/postStatus.model";
 import User from 'models/user/user.model';
 import UserDp from 'models/user/userDp.model';
 import { NO_UNKNOWN, validate, sendData } from '@ssbdev/common';
+import statusCache from 'middleware/statusCache';
 
 // initializations
 // validation schema
@@ -22,11 +23,13 @@ const getPostsReqBodySchema = yup.object().shape( {
 // todo: getter function for truncated description
 export default [
     validate( getPostsReqBodySchema ),
+    statusCache( "post" ),
     async ( req, res, next ) => {
         const { categoryId, userId } = req.validated.body;
+        const { POSTSTATUS } = req;
 
         const where = {
-            "$status.name$": "active"
+            statusId: POSTSTATUS.ACTIVE
         };
 
         if ( categoryId ) where.categoryId = categoryId;
@@ -38,11 +41,6 @@ export default [
                 where,
                 attributes: ["id", "title", "createdAt"],
                 include: [
-                    {
-                        model: PostStatus,
-                        attributes: ["name"],
-                        as: "status"
-                    },
                     {
                         model: User,
                         attributes: ["id", "firstName", "lastName"],

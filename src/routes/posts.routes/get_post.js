@@ -3,6 +3,8 @@
 import * as yup from 'yup';
 
 // middlewares
+import statusCache from 'middleware/statusCache';
+
 // utils
 // models
 import Post from 'models/post/post.model';
@@ -10,11 +12,9 @@ import User from 'models/user/user.model';
 import Comment from 'models/comment.model';
 import UserDp from 'models/user/userDp.model';
 import PostImage from 'models/post/postImage.model';
-import PostStatus from 'models/post/postStatus.model';
-import CommentStatus from 'models/commentStatus.model';
 
 // common lib
-import { NO_UNKNOWN, validate, sendData, exclude, NotFoundError } from '@ssbdev/common';
+import { NO_UNKNOWN, validate, sendData, NotFoundError } from '@ssbdev/common';
 
 // initializations
 // validation schema
@@ -24,25 +24,23 @@ const getPostReqBodySchema = yup.object().shape( {
 
 export default [
     validate( getPostReqBodySchema ),
+    statusCache( "post" ),
+    statusCache( "comment" ),
     async ( req, res, next ) => {
         const { postId } = req.validated.body;
+        const { POSTSTATUS, COMMENTSTATUS } = req;
 
         try {
             const post = await Post.findOne( {
                 where: {
                     id: postId,
-                    "$status.name$": "active"
+                    statusId: POSTSTATUS.ACTIVE
                 },
                 include: [
                     {
                         model: PostImage,
                         attributes: ['url'],
                         as: "image"
-                    },
-                    {
-                        model: PostStatus,
-                        attributes: ['name'],
-                        as: "status"
                     },
                     {
                         model: User,
@@ -59,8 +57,8 @@ export default [
                     {
                         model: Comment,
                         where: {
-                            "$status.name$": "active", // todo: inactive commenst also queried, fix
-                            // statusId: 1
+                            // "$status.name$": "active", // todo: inactive commenst also queried, fix
+                            statusId: COMMENTSTATUS.ACTIVE
                         },
                         /**
                          * eager loading
@@ -82,10 +80,6 @@ export default [
                                 }
                             ],
                             as: "commentedBy"
-                        }, {
-                            model: CommentStatus,
-                            attributes: ['name'],
-                            as: "status"
                         }]
                     }
                 ],
@@ -96,13 +90,9 @@ export default [
 
             if ( !post ) throw new NotFoundError( "Post not found" );
 
-            const { status, ...rest } = post.toJSON();
             // send response
             sendData( res, {
-                post: {
-                    ...rest,
-                    comments: rest.comments.map( comment => exclude( comment, ['status'] ) )
-                }
+                post: post.toJSON()
             } );
 
         } catch ( e ) {

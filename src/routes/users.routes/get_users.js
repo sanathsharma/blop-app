@@ -4,11 +4,12 @@ import { pick } from "lodash";
 import * as yup from 'yup';
 
 // middlewares
+import statusCache from "middleware/statusCache";
+
 // utils
 // models
 import User from "models/user/user.model";
 import UserDp from "models/user/userDp.model";
-import UserStatus from "models/user/userStatus.model";
 
 // common lib
 import { NO_UNKNOWN, validate, sendData } from "@ssbdev/common";
@@ -19,17 +20,15 @@ const getUsersReqBody = yup.object().shape( {} ).strict( true ).noUnknown( true,
 
 export default [
     validate( getUsersReqBody ),
+    statusCache(),
     async ( req, res, next ) => {
+        const { USERSTATUS } = req;
+
         try {
             const users = await User.findAll( {
-                where: { "$status.name$": "active" },
+                where: { statusId: USERSTATUS.ACTIVE },
                 attributes: ["id", "emailId", "firstName"],
                 include: [
-                    {
-                        model: UserStatus,
-                        attributes: ["name"],
-                        as: "status"
-                    },
                     {
                         model: UserDp,
                         attributes: ["url", "createdAt"],
@@ -41,6 +40,7 @@ export default [
             sendData( res, {
                 users: users.map( user => pick( user.toJSON(), ["id", "emailId", "firstName", "dp"] ) )
             } );
+
         } catch ( e ) {
             next( e );
         }

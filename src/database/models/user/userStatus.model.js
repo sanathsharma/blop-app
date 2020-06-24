@@ -4,7 +4,8 @@ import * as Sequelize from 'sequelize';
 const UserStatus = db.define( "UserStatus", {
     name: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true
     }
 } );
 

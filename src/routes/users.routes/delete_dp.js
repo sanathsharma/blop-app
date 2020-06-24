@@ -4,10 +4,11 @@
 import * as yup from 'yup';
 
 // middlewares
+import statusCache from 'middleware/statusCache';
+
 // utils
 // models
 import User from "models/user/user.model";
-import UserStatus from "models/user/userStatus.model";
 
 // common lib
 import { NO_UNKNOWN, validate, sendMessage, UnauthorizedError } from '@ssbdev/common';
@@ -18,21 +19,16 @@ const deleteDpReqBodySchema = yup.object().shape( {} ).strict( true ).noUnknown(
 
 export default [
     validate( deleteDpReqBodySchema ),
+    statusCache(),
     async ( req, res, next ) => {
         const userId = req['userId'];
+        const { USERSTATUS } = req;
 
         try {
             // get the atcive user by id
             const user = await User.findByPk( userId, {
                 attributes: ['id'],
-                where: { '$status.name$': 'active' },
-                include: [
-                    {
-                        model: UserStatus,
-                        attributes: ['name', 'id'],
-                        as: 'status'
-                    }
-                ]
+                where: { statusId: USERSTATUS.ACTIVE }
             } );
 
             // if user not found

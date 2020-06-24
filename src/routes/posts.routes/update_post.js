@@ -3,13 +3,14 @@
 import * as yup from 'yup';
 
 // middlewares
+import statusCache from 'middleware/statusCache';
+
 // utils
 import uploadPostImage from './postImage_storage.util';
 
 // models
 import Post from 'models/post/post.model';
 import PostImage from 'models/post/postImage.model';
-import PostStatus from 'models/post/postStatus.model';
 
 // common lib
 import { NO_UNKNOWN, validate, sendMessage, sendData, RequestValidationError, NotFoundError } from '@ssbdev/common';
@@ -25,13 +26,13 @@ const updatePostReqBody = yup.object().shape( {
 export default [
     uploadPostImage.single( 'image' ),
     validate( updatePostReqBody ),
+    statusCache( "post" ),
     async ( req, res, next ) => {
         const { postId, title, description } = req.validated.body;
-        const userId = req.userId;
-        const image = req.file; // image uploaded
+        const { userId, POSTSTATUS, file: image /*image uploaded*/ } = req;
 
         // todo: write helper util for positive integer
-        // TODO: prodMsg "Something went wrong, could not update post" 
+        // TODO: prodMsg "Something went wrong, could not update post"
         if ( isNaN( parseInt( postId ) ) ) throw new RequestValidationError( "postId invalid" );
 
         if ( !title && !description && !image ) return sendMessage( res, "Post upto date" );
@@ -43,14 +44,10 @@ export default [
                 where: {
                     id: postId,
                     addedBy: userId,
-                    "$status.name$": "active",
+                    statusId: POSTSTATUS.ACTIVE
                 },
                 include: [
                     {
-                        model: PostStatus,
-                        attributes: ['name'],
-                        as: "status"
-                    }, {
                         model: PostImage,
                         attributes: ['url'],
                         as: "image"

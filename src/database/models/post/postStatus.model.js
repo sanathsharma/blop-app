@@ -4,7 +4,8 @@ import * as Sequelize from 'sequelize';
 const PostStatus = db.define( "PostStatus", {
     name: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true
     }
 } );
 

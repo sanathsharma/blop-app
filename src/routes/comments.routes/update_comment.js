@@ -10,6 +10,7 @@ import Comment from 'models/comment.model';
 
 // common lib
 import { NO_UNKNOWN, validate, sendMessage, BadRequestError } from '@ssbdev/common';
+import statusCache from 'middleware/statusCache';
 
 // models
 // initializations
@@ -21,9 +22,10 @@ const updateCommentReqBodySchema = yup.object().shape( {
 
 export default [
     validate( updateCommentReqBodySchema ),
+    statusCache( "comment" ),
     async ( req, res, next ) => {
         const { commentId, description } = req.validated.body;
-        const userId = req.userId;
+        const { userId, COMMENTSTATUS } = req;
 
         try {
             // find comment and check if comment created by this user
@@ -31,13 +33,8 @@ export default [
                 where: {
                     id: commentId,
                     addedBy: userId,
-                    "$status.name$": "active"
-                },
-                include: [{
-                    model: CommentStatus,
-                    attributes: ['name'],
-                    as: "status"
-                }]
+                    statusId: COMMENTSTATUS.ACTIVE
+                }
             } );
 
             // if comment not found

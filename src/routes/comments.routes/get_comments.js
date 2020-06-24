@@ -2,6 +2,9 @@
 // vendors
 import * as yup from 'yup';
 
+// middleware
+import statusCache from 'middleware/statusCache';
+
 // common lib
 import { NO_UNKNOWN, validate, sendData, exclude } from '@ssbdev/common';
 
@@ -9,7 +12,6 @@ import { NO_UNKNOWN, validate, sendData, exclude } from '@ssbdev/common';
 import User from 'models/user/user.model';
 import Comment from 'models/comment.model';
 import UserDp from 'models/user/userDp.model';
-import CommentStatus from 'models/commentStatus.model';
 
 // initializations
 // validation schema
@@ -20,12 +22,14 @@ const getCommentsReqBodySchema = yup.object().shape( {
 
 export default [
     validate( getCommentsReqBodySchema ),
+    statusCache( "comment" ),
     async ( req, res, next ) => {
         const { postId, parent } = req.validated.body;
+        const { COMMENTSTATUS } = req;
 
         const where = {
             postId,
-            "$status.name$": "active"
+            statusId: COMMENTSTATUS.ACTIVE
         };
 
         /**
@@ -43,11 +47,6 @@ export default [
                 },
                 include: [
                     {
-                        model: CommentStatus,
-                        attributes: ['name'],
-                        as: "status"
-                    },
-                    {
                         model: User,
                         attributes: ["id", "firstName", "lastName"],
                         include: [
@@ -63,9 +62,7 @@ export default [
             } );
 
             //send response
-            sendData( res, {
-                comments: comments.map( comment => exclude( comment.toJSON(), ['status'] ) )
-            } );
+            sendData( res, { comments } );
 
         } catch ( e ) {
             next( e );

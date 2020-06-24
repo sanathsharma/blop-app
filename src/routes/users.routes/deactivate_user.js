@@ -3,10 +3,11 @@
 import * as yup from 'yup';
 
 // middlewares
+import statusCache from 'middleware/statusCache';
+
 // utils
 // models
 import User from "models/user/user.model";
-import UserStatus from "models/user/userStatus.model";
 
 // common lib
 import { NO_UNKNOWN, validate, sendMessage, BadRequestError } from '@ssbdev/common';
@@ -15,10 +16,13 @@ import { NO_UNKNOWN, validate, sendMessage, BadRequestError } from '@ssbdev/comm
 // validation schema
 const deactivateUserReqBody = yup.object().shape( {} ).strict( true ).noUnknown( true, NO_UNKNOWN );
 
+export const USER_ACCOUNT_DEACTIVETED_MSG = "Account Deactivated";
+
 export default [
     validate( deactivateUserReqBody ),
+    statusCache(),
     async ( req, res, next ) => {
-        const userId = req['userId'];
+        const { USERSTATUS, userId } = req;
 
         try {
             const user = await User.findByPk( userId );
@@ -26,16 +30,12 @@ export default [
             // if user not found
             if ( !user ) throw new BadRequestError( "User not found", "Something went wrong, could not delete your account" );
 
-            // get status inactive record
-            const status = await UserStatus.findOne( {
-                where: { name: "inactive" }
-            } );
-
             // deactivate account by seting statisId to inactive status id
-            await user.setStatus( status );
+            await user.setStatus( USERSTATUS.INACTIVE );
 
             // send success response
-            sendMessage( res, "Account Deactivated" );
+            sendMessage( res, USER_ACCOUNT_DEACTIVETED_MSG );
+
         } catch ( e ) {
             next( e );
         }

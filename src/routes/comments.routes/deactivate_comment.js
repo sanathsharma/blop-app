@@ -2,12 +2,14 @@
 // vendors
 import * as yup from 'yup';
 
+// middleware
+import statusCache from 'middleware/statusCache';
+
 // common lib
-import { NO_UNKNOWN, validate, sendMessage, BadRequestError, ServerError } from '@ssbdev/common';
+import { NO_UNKNOWN, validate, sendMessage, BadRequestError } from '@ssbdev/common';
 
 // models
 import Comment from 'models/comment.model';
-import CommentStatus from 'models/commentStatus.model';
 
 // initializations
 // validation schema
@@ -17,9 +19,10 @@ const deactivateCommentReqBodySchema = yup.object().shape( {
 
 export default [
     validate( deactivateCommentReqBodySchema ),
+    statusCache( "comment" ),
     async ( req, res, next ) => {
         const { commentId } = req.validated.body;
-        const userId = req.userId;
+        const { userId, COMMENTSTATUS } = req;
 
         try {
             // find comment and check if comment created by this user
@@ -27,13 +30,8 @@ export default [
                 where: {
                     id: commentId,
                     addedBy: userId,
-                    "$status.name$": "active"
-                },
-                include: [{
-                    model: CommentStatus,
-                    attributes: ['name'],
-                    as: "status"
-                }]
+                    statusId: COMMENTSTATUS.ACTIVE
+                }
             } );
 
             // if comment not found
@@ -42,21 +40,8 @@ export default [
                 throw new BadRequestError( "Comment not found / already deactivated" );
             }
 
-            // find inactive comment status
-            const commentStatus = await CommentStatus.findOne( {
-                where: {
-                    name: "inactive"
-                }
-            } );
-
-            // if comment inactive status not found
-            if ( !commentStatus ) {
-                if ( process.env.NODE_ENV !== "development" ) return sendMessage( res, "Comment Deleted" );
-                throw new ServerError( "Inactive comment status not found" );
-            }
-
             // deactivate comment 
-            await comment.setStatus( commentStatus.id );
+            await comment.setStatus( COMMENTSTATUS.INACTIVE );
 
             // send response
             sendMessage( res, "Comment Deleted" );

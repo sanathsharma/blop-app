@@ -3,12 +3,14 @@
 import * as yup from 'yup';
 
 // middlewares
+import statusCache from 'middleware/statusCache';
+
 // utils
 // models
-import UserStatus from "models/user/userStatus.model";
-
 // common lib
-import { NO_UNKNOWN, validate, sendData, ServerError, BadRequestError } from '@ssbdev/common';
+import { NO_UNKNOWN, validate, sendData, BadRequestError } from '@ssbdev/common';
+import User from 'models/user/user.model';
+import UserDp from 'models/user/userDp.model';
 
 // initializations
 // validation schema
@@ -22,29 +24,38 @@ const signUpReqBodySchema = yup.object().shape( {
 
 export default [
     validate( signUpReqBodySchema ),
+    statusCache(),
     async ( req, res, next ) => {
         const { emailId, password, firstName, lastName, bio } = req.validated.body;
+        const { USERSTATUS } = req;
 
         try {
-            // get status active record
-            const status = await UserStatus.findOne( {
-                where: { name: "active" }
-            } );
-
-            // if active status not found in db
-            if ( !status ) throw new ServerError( "\"active\" status not found", "Could not signup" );
-
             // get users with active status to check if the user already exists
-            const users = await status.getUsers( {
-                where: { emailId }
+            const users = await User.findAll( {
+                where: {
+                    emailId,
+                    statusId: USERSTATUS.ACTIVE
+                }
             } );
 
             // send error if user with same email exists
             if ( users.length > 0 ) throw new BadRequestError( "User already exists", "Could not signup" );
 
             // create new user with status active
-            const newUser = await status.createUser( { emailId, password, firstName, lastName, bio }, {
-                attributes: ['id', "emailId", "firstName", "lastName", "bio", "statusId", "dpId"]
+            const newUser = await User.create( {
+                emailId,
+                password,
+                firstName,
+                lastName,
+                bio,
+                statusId: USERSTATUS.ACTIVE
+            }, {
+                attributes: ['id', "emailId", "firstName", "lastName", "bio"],
+                include: [{
+                    model: UserDp,
+                    attributes: ["url"],
+                    as: "dp"
+                }]
             } );
 
             // todo: send verification link

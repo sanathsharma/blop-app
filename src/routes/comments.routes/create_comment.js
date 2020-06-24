@@ -2,16 +2,18 @@
 // vendors
 import *  as yup from 'yup';
 
+// middleware
+import statusCache from 'middleware/statusCache';
+
 // common lib
-import { validate, sendData, NO_UNKNOWN, BadRequestError, ServerError } from '@ssbdev/common';
+import { validate, sendData, NO_UNKNOWN, BadRequestError } from '@ssbdev/common';
 
 // utils
 import { COMMENT_DESC_MAX_CHAR } from 'constants/others.constants';
 
 // models
 import Post from 'models/post/post.model';
-import PostStatus from 'models/post/postStatus.model';
-import CommentStatus from 'models/commentStatus.model';
+import Comment from 'models/comment.model';
 
 // initializations
 // validation schema
@@ -23,44 +25,29 @@ const createCommentReqBodySchema = yup.object().shape( {
 
 export default [
     validate( createCommentReqBodySchema ),
+    statusCache( "post" ),
+    statusCache( "comment" ),
     async ( req, res, next ) => {
         const { postId, description, parent = null } = req.validated.body;
-        const userId = req.userId;
+        const { userId, POSTSTATUS, COMMENTSTATUS } = req;
 
         try {
             const post = await Post.findOne( {
                 where: {
                     id: postId,
-                    "$status.name$": "active"
-                },
-                include: [
-                    {
-                        model: PostStatus,
-                        attributes: ['name'],
-                        as: "status"
-                    }
-                ]
+                    statusId: POSTSTATUS.ACTIVE
+                }
             } );
 
             // if post not found
             if ( !post ) throw new BadRequestError( "Post not found", "Could not create comment" );
 
-            // find active comment status 
-            const commentStatus = await CommentStatus.findOne( {
-                where: {
-                    name: "active"
-                }
-            } );
-
-            // if status not found
-            if ( !commentStatus ) throw new ServerError( "Active comment status not found", "Could not create comment" );
-
             // create comment
-            const newComment = await post.createComment( {
+            const newComment = await Comment.create( {
                 description,
                 postId,
                 addedBy: userId,
-                statusId: commentStatus.id,
+                statusId: COMMENTSTATUS.ACTIVE,
                 parent
             } );
 

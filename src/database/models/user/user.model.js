@@ -10,7 +10,7 @@ const User = db.define( 'User', {
         type: STRING,
         allowNull: false,
         validate: { isEmail: { msg: 'Invalid Email ID.' } },
-        // unique: true
+        unique: true
     },
     password: {
         type: STRING,

@@ -9,7 +9,8 @@ module.exports = {
             },
             name: {
                 type: STRING,
-                allowNull: false
+                allowNull: false,
+                unique: true
             },
             createdAt: {
                 allowNull: false,

@@ -22,7 +22,7 @@ export const app = express();
 // -------------------------- other middleware -----------------------
 
 app.use( compression( { threshold: 0 } ) ); // compress response
-app.use( morgan( 'dev' ) ); // HTTP request logger middleware
+if ( process.env.NODE_ENV !== "test" ) app.use( morgan( 'dev' ) ); // HTTP request logger middleware
 app.use( express.urlencoded( { extended: false } ) );
 app.use( express.json() ); // body parsing
 
@@ -35,16 +35,13 @@ app.use( cors( {
     allowedHeaders: ['Content-Type', 'Authorization']
 } ) );
 
-app.use( ( req, res, next ) => {
-    res.removeHeader( 'X-Powered-By' ); // to not let the client side know about backend technologies
-    next();
-} );
+app.disable( "x-powered-by" ); // to not let the client side know about backend technologies
 
 // ------------------------ jwt auth middleware -----------------------
 
 app.use( isAuth( {
     tokenIn: "Authorization",
-    barer: true
+    bearer: true
 } ) );
 
 // ----------------- initialize validatedBody & params ----------------
@@ -76,4 +73,4 @@ app.use( ( req, res, next ) => next( new PathNotFoundError() ) );
 
 // ----------------- error handling middleware ---------- --------------
 
-app.use( errorHandler );
+app.use( errorHandler( {} ) );

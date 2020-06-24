@@ -26,6 +26,7 @@
                     "db-config": "./src/database/config/config.js",
                     "models": "./src/database/models",
                     "db": "./src/db.js",
+                    "cache": "./src/cache.js",
                     "utils": "./src/utils",
                     "app": "./src/app.js"
                 }

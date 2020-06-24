@@ -6,14 +6,15 @@ import { sign } from "jsonwebtoken";
 import * as yup from 'yup';
 
 // middlewares
+import statusCache from "middleware/statusCache";
+
 // utils
 // models
 import User from "models/user/user.model";
 import UserDp from "models/user/userDp.model";
-import UserStatus from "models/user/userStatus.model";
 
 // common lib
-import { NO_UNKNOWN, validate, sendData, AuthenticationFailedError, UnauthorizedError } from "@ssbdev/common";
+import { NO_UNKNOWN, validate, sendData, UnauthorizedError } from "@ssbdev/common";
 
 // initializations
 // validation schema
@@ -24,18 +25,15 @@ const loginReqBodySchema = yup.object().shape( {
 
 export default [
     validate( loginReqBodySchema ),
+    statusCache(),
     async ( req, res, next ) => {
         const { emailId, password } = req.validated.body;
+        const { USERSTATUS } = req;
 
         try {
             const user = await User.findOne( {
-                where: { emailId, '$status.name$': "active" },
+                where: { emailId, statusId: USERSTATUS.ACTIVE },
                 include: [
-                    {
-                        model: UserStatus,
-                        attributes: ["name"],
-                        as: "status"
-                    },
                     {
                         model: UserDp,
                         attributes: ["url"],

@@ -3,14 +3,15 @@
 import * as yup from 'yup';
 
 // middlewares
+import statusCache from 'middleware/statusCache';
+
 // utils
 // models
 import User from "models/user/user.model";
 import UserDp from "models/user/userDp.model";
-import UserStatus from "models/user/userStatus.model";
 
 // common lib
-import { NO_UNKNOWN, validate, sendData, NotFoundError } from '@ssbdev/common';
+import { NO_UNKNOWN, validate, sendData, NotFoundError, exclude } from '@ssbdev/common';
 
 // initializations
 // validation schema
@@ -21,20 +22,21 @@ const getUserReqBodySchema = yup.object().shape( {
 // TODO: send posts also
 export default [
     validate( getUserReqBodySchema ),
+    statusCache(),
     async ( req, res, next ) => {
         const { userId } = req.validated.body;
+        const { USERSTATUS } = req;
 
         try {
-            const user = await User.findByPk( userId, {
+            const user = await User.findOne( {
+                where: {
+                    id: userId,
+                    statusId: USERSTATUS.ACTIVE
+                },
                 attributes: {
-                    exclude: ['dpId', 'statusId', 'password']
+                    exclude: ['dpId', 'password']
                 },
                 include: [
-                    {
-                        model: UserStatus,
-                        attributes: ['name'],
-                        as: "status"
-                    },
                     {
                         model: UserDp,
                         attributes: ['url'],
@@ -46,7 +48,8 @@ export default [
             // if user not found
             if ( !user ) throw new NotFoundError( "User not found" );
 
-            sendData( res, { user: user.toJSON() } );
+            sendData( res, { user: exclude( user.toJSON(), ["statusId"] ) } );
+
         } catch ( e ) {
             next( e );
         }

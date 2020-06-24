@@ -3,6 +3,8 @@
 import * as yup from 'yup';
 
 // middlewares
+import statusCache from 'middleware/statusCache';
+
 // utils
 // models
 import User from "models/user/user.model";
@@ -23,14 +25,16 @@ const updateUserReqBody = yup.object().shape( {
 
 export default [
     validate( updateUserReqBody ),
+    statusCache(),
     async ( req, res, next ) => {
         const allowedUpdates = ['password', 'firstName', 'lastName', 'bio'];
-        const userId = req['userId'];
         const { updates } = req.validated.body;
+        const { USERSTATUS, userId } = req;
 
         try {
             // find the user
-            const user = await User.findByPk( userId, {
+            const user = await User.findOne( {
+                where: { id: userId, statusId: USERSTATUS.ACTIVE },
                 attributes: ['password', 'firstName', 'lastName', 'bio', 'id']
             } );
 
@@ -38,9 +42,9 @@ export default [
             if ( !user ) throw new UnauthorizedError( "User not found" );
 
             // update the user
-            Object.keys( updates ).forEach( key => {
+            for ( let key in updates ) {
                 if ( allowedUpdates.includes( key ) ) user[key] = updates[key];
-            } );
+            }
 
             // save and send the succes response
             if ( user.changed() )
@@ -52,4 +56,5 @@ export default [
         } catch ( e ) {
             next( e );
         }
-    }]; 
+    }
+]; 

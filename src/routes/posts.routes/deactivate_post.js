@@ -3,10 +3,11 @@
 import * as yup from 'yup';
 
 // middlewares
+import statusCache from 'middleware/statusCache';
+
 // utils
 // models
 import Post from 'models/post/post.model';
-import PostStatus from 'models/post/postStatus.model';
 
 // common lib
 import { NO_UNKNOWN, validate, sendMessage, ServerError } from '@ssbdev/common';
@@ -19,9 +20,10 @@ const deletePostReqBody = yup.object().shape( {
 
 export default [
     validate( deletePostReqBody ),
+    statusCache( "post" ),
     async ( req, res, next ) => {
         const { postId } = req.validated.body;
-        const userId = req.userId;
+        const { userId, POSTSTATUS } = req;
 
         try {
             // find post (by user)
@@ -29,26 +31,15 @@ export default [
                 where: {
                     id: postId,
                     addedBy: userId,
-                    "$status.name$": "active"
-                },
-                include: [{
-                    model: PostStatus,
-                    attributes: ['name'],
-                    as: "status"
-                }]
+                    statusId: POSTSTATUS.ACTIVE
+                }
             } );
 
             // if post not found / not create by user -> does not matter, show deleted
             if ( !post ) return sendMessage( res, "Post Deleted" );
 
-            // find inactive status id
-            const status = await PostStatus.findOne( { where: { name: "inactive" } } );
-
-            // if active status not found
-            if ( !status ) throw new ServerError( "'Inactive' status not found", "Something went wrong, could not delete post" );
-
             // deactivate post
-            await post.setStatus( status.id );
+            await post.setStatus( POSTSTATUS.INACTIVE );
 
             // send response
             sendMessage( res, "Post Deleted" );
