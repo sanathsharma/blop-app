@@ -34,8 +34,10 @@ export default ( isFavorites = false ) => [
         const { postId } = req.validated.body;
         const userId = req.userId;
 
-        // TODO: prodMsg `Something went wrong, could not remove post from ${ messageKey }`
-        if ( !postId && !req.validated.body[idKey] ) throw new RequestValidationError( `One of 'postId','${ idKey }' is required` );
+        if ( !postId && !req.validated.body[idKey] ) throw new RequestValidationError(
+            `One of 'postId','${ idKey }' is required`,
+            `Something went wrong, could not remove post from ${ messageKey }`
+        );
 
         const where = {};
 

@@ -1,19 +1,17 @@
-import { hash } from 'bcryptjs';
 import db from 'db';
-import { STRING } from 'sequelize';
+import { DataTypes } from 'sequelize';
 import UserDp from './userDp.model';
 import UserStatus from './userStatus.model';
-
+import { hash } from 'bcryptjs';
 
 const User = db.define( 'User', {
     emailId: {
-        type: STRING,
+        type: DataTypes.STRING,
         allowNull: false,
-        validate: { isEmail: { msg: 'Invalid Email ID.' } },
-        unique: true
+        validate: { isEmail: { msg: 'Invalid Email ID.' } }
     },
     password: {
-        type: STRING,
+        type: DataTypes.STRING,
         allowNull: false,
         validate: {
             lencheck ( val ) {
@@ -22,15 +20,24 @@ const User = db.define( 'User', {
         }
     },
     firstName: {
-        type: STRING,
+        type: DataTypes.STRING,
         allowNull: false,
     },
     lastName: {
-        type: STRING,
+        type: DataTypes.STRING,
         allowNull: true
     },
+    fullName: {
+        type: DataTypes.VIRTUAL,
+        get () {
+            return `${ this.firstName } ${ this.lastName }`;
+        },
+        set ( value ) {
+            throw new Error( "Should not set fullName" );
+        }
+    },
     bio: {
-        type: STRING,
+        type: DataTypes.STRING,
         allowNull: true
     }
 }, {
@@ -46,13 +53,10 @@ const User = db.define( 'User', {
             if ( user.changed( 'password' ) ) hashPassword( user, options );
         }
     },
-    modelName: 'User',
-    indexes: [
-        { fields: ['statusId', 'emailId'], unique: true }
-    ]
+    modelName: 'User'
 } );
 
-async function hashPassword ( user, options ) {
+async function hashPassword ( user, _options ) {
     user['password'] = await hash( user['password'], 12 );
 }
 

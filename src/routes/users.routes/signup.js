@@ -7,10 +7,11 @@ import statusCache from 'middleware/statusCache';
 
 // utils
 // models
+import UserDp from 'models/user/userDp.model';
+import User from 'models/user/user.model';
+
 // common lib
 import { NO_UNKNOWN, validate, sendData, BadRequestError } from '@ssbdev/common';
-import User from 'models/user/user.model';
-import UserDp from 'models/user/userDp.model';
 
 // initializations
 // validation schema

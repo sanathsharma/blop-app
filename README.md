@@ -84,3 +84,9 @@ router.post( '/', upload.single( 'image' ), ( req, res, next ) => {
 // models
 // initializations
 // validation schema
+
+# Multer Usage
+http://expressjs.com/en/resources/middleware/multer.html
+
+# postgress SQL queries
+https://www.tutorialspoint.com/postgresql/postgresql_create_table.htm

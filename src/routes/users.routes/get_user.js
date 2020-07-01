@@ -1,9 +1,13 @@
 // express
 // vendors
 import * as yup from 'yup';
+import { QueryTypes } from 'sequelize';
 
 // middlewares
 import statusCache from 'middleware/statusCache';
+
+// db
+import db from 'db';
 
 // utils
 // models
@@ -28,22 +32,40 @@ export default [
         const { USERSTATUS } = req;
 
         try {
-            const user = await User.findOne( {
-                where: {
-                    id: userId,
+            const [user] = await db.query( `
+                SELECT "u"."id", "emailId","dp"."url" AS "dpUrl", "firstName", "lastName", "bio"
+                FROM "Users" AS "u"
+                LEFT JOIN "UserDps" AS "dp"
+                ON "u"."dpId"="dp"."id"
+                WHERE "u"."id" = :userId AND "u"."statusId" = :statusId
+            `, {
+                replacements: {
+                    userId,
                     statusId: USERSTATUS.ACTIVE
                 },
-                attributes: {
-                    exclude: ['dpId', 'password']
-                },
-                include: [
-                    {
-                        model: UserDp,
-                        attributes: ['url'],
-                        as: "dp"
-                    }
-                ]
+                // raw: true, // direct data instead of instance
+                type: QueryTypes.SELECT,
+                nest: true,
+                model: User,
+                mapToModel: true,
             } );
+
+            // const user = await User.findOne( {
+            //     where: {
+            //         id: userId,
+            //         statusId: USERSTATUS.ACTIVE
+            //     },
+            //     attributes: {
+            //         exclude: ['dpId', 'password', 'createdAt', 'updatedAt']
+            //     },
+            //     include: [
+            //         {
+            //             model: UserDp,
+            //             attributes: ['url'],
+            //             as: "dp"
+            //         }
+            //     ]
+            // } );
 
             // if user not found
             if ( !user ) throw new NotFoundError( "User not found" );

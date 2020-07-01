@@ -1,4 +1,14 @@
+const Sequelize = require( "sequelize" );
+
+/**
+ * @link https://sequelize.readthedocs.io/en/latest/docs/migrations/
+ */
+
 module.exports = {
+    /**
+     * @param {Sequelize.QueryInterface} queryInterface
+     * @param {Sequelize} Sequelize
+     */
     up: ( queryInterface, { STRING, INTEGER, DATE } ) => {
         return queryInterface.createTable( 'Users', {
             id: {
@@ -9,8 +19,7 @@ module.exports = {
             },
             emailId: {
                 allowNull: false,
-                type: STRING,
-                unique: true
+                type: STRING
             },
             password: {
                 allowNull: false,
@@ -56,6 +65,10 @@ module.exports = {
             }
         } );
     },
+    /**
+     * @param {Sequelize.QueryInterface} queryInterface
+     * @param {Sequelize} Sequelize
+     */
     down: ( queryInterface, Sequelize ) => {
         return queryInterface.dropTable( 'Users' );
     }

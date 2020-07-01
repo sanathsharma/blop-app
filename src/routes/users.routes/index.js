@@ -36,7 +36,6 @@ router.post( "/delete_dp", checkAuth, delete_dp );
 // smpt -> key(queryParam) -> attack key with api
 // key -> jwt -> process.env.CHANGE_PASSWORD_SECRET
 
-// todo: 
-// active status & emailId unique
+// todo: active status & emailId unique
 
 export default router;

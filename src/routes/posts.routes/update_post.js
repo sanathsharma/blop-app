@@ -31,9 +31,11 @@ export default [
         const { postId, title, description } = req.validated.body;
         const { userId, POSTSTATUS, file: image /*image uploaded*/ } = req;
 
-        // todo: write helper util for positive integer
-        // TODO: prodMsg "Something went wrong, could not update post"
-        if ( isNaN( parseInt( postId ) ) ) throw new RequestValidationError( "postId invalid" );
+        // TODO: write helper util for positive integer
+        if ( isNaN( parseInt( postId ) ) ) throw new RequestValidationError(
+            "postId invalid",
+            "Something went wrong, could not update post"
+        );
 
         if ( !title && !description && !image ) return sendMessage( res, "Post upto date" );
 

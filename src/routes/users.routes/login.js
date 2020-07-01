@@ -14,7 +14,12 @@ import User from "models/user/user.model";
 import UserDp from "models/user/userDp.model";
 
 // common lib
-import { NO_UNKNOWN, validate, sendData, UnauthorizedError } from "@ssbdev/common";
+import {
+    NO_UNKNOWN,
+    validate,
+    sendData,
+    UnauthorizedError
+} from "@ssbdev/common";
 
 // initializations
 // validation schema
