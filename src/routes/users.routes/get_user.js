@@ -12,10 +12,12 @@ import db from 'db';
 // utils
 // models
 import User from "models/user/user.model";
-import UserDp from "models/user/userDp.model";
 
 // common lib
-import { NO_UNKNOWN, validate, sendData, NotFoundError, exclude } from '@ssbdev/common';
+import { NO_UNKNOWN, validate, sendData, exclude } from '@ssbdev/common';
+
+// errors
+import { NotFoundError } from "errors/not-found-error";
 
 // initializations
 // validation schema

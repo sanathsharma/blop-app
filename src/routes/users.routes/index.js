@@ -15,6 +15,8 @@ import update_user from './update_user';
 import deactivate_user from './deactivate_user';
 import update_dp from './update_dp';
 import delete_dp from './delete_dp';
+import refresh_tokens from './refresh_tokens';
+import logout from "./logout";
 
 // initializations
 const router = express.Router();
@@ -23,6 +25,8 @@ const router = express.Router();
 
 router.post( '/login', login );
 router.post( '/signup', signup );
+router.post( "/refresh", refresh_tokens );
+router.post( "/logout", logout );
 
 router.post( '/get_users', checkAuth, get_users );
 router.post( "/get_user", checkAuth, get_user );

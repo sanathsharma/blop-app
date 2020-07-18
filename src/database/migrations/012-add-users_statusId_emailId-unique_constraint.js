@@ -4,7 +4,7 @@ const Sequelize = require( "sequelize" );
  * @link https://sequelize.readthedocs.io/en/latest/docs/migrations/
  */
 
-const CONSTRAINT_NAME = "users_status_id_email_id";
+const CONSTRAINT_NAME = "users_statusId_emailId";
 
 module.exports = {
     /**

@@ -6,14 +6,19 @@ import express from 'express';
 import morgan from 'morgan'; // HTTP request logger middleware
 import compression from 'compression';
 import cors from 'cors';
+import helmet from 'helmet';
+import cookieSession from 'cookie-session';
 
-// middlewares
-import { isAuth, errorHandler, PathNotFoundError } from '@ssbdev/common';
+// common
+import { errorHandler, isAuth } from '@ssbdev/common';
 
 //routers
 import userRoutes from './routes/users.routes';
 import postRoutes from './routes/posts.routes';
 import commentRoutes from './routes/comments.routes';
+
+// errors
+import { PathNotFoundError } from "errors/path-not-found-error";
 
 // ------------------------- create express app ----------------------
 
@@ -35,13 +40,31 @@ app.use( cors( {
     allowedHeaders: ['Content-Type', 'Authorization']
 } ) );
 
-app.disable( "x-powered-by" ); // to not let the client side know about backend technologies
+app.use( helmet() );
+
+// -------------------------------- cookies -----------------------------
+
+app.use( cookieSession( {
+    secret: process.env.COOKIE_SECRET,
+    name: "session",
+    /**
+     * attach the cookie in the request header only if url matchs the mentioned inital path
+     */
+    path: "/api/users/refresh",
+    /**
+     * not accessible in browser
+     */
+    httpOnly: true,
+    /**
+     * only on https except for test environment
+     */
+    // secure: process.env.NODE_ENV !== "test"
+} ) );
 
 // ------------------------ jwt auth middleware -----------------------
 
 app.use( isAuth( {
-    tokenIn: "Authorization",
-    bearer: true
+    tokenIn: "Authorization"
 } ) );
 
 // ----------------- initialize validatedBody & params ----------------
@@ -49,7 +72,8 @@ app.use( isAuth( {
 app.use( ( req, res, next ) => {
     req.validated = {
         body: {},
-        params: {}
+        params: {},
+        query: {}
     };
     next();
 } );

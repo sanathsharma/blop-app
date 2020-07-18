@@ -1,6 +1,16 @@
-{
-    "inputSourceMap": false,
-    "sourceMaps": false,
+module.exports = {
+    "env": {
+        "production": {
+            "minified": true,
+            "comments": false,
+            "ignore": [
+                "./src/setupTests.js",
+                "**/*.test.js",
+                "**/*.spec.js",
+                "./src/__mocks__/**.*"
+            ],
+        }
+    },
     "presets": [
         [
             "@babel/preset-env",
@@ -23,12 +33,12 @@
                     "./src"
                 ],
                 "alias": {
-                    "db-config": "./src/database/config/config.js",
-                    "models": "./src/database/models",
-                    "db": "./src/db.js",
-                    "cache": "./src/cache.js",
-                    "utils": "./src/utils",
-                    "app": "./src/app.js"
+                    "db-config": `./src/database/config/config.js`,
+                    "models": `./src/database/models`,
+                    "db": `./src/db.js`,
+                    "cache": `./src/cache.js`,
+                    "utils": `./src/utils`,
+                    "app": `./src/app.js`
                 }
             }
         ],
@@ -39,4 +49,4 @@
             }
         ]
     ]
-}
+};

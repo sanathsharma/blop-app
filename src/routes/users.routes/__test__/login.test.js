@@ -1,10 +1,17 @@
+// vendors
 import request from 'supertest';
+
+// app
 import { app } from 'app';
+
+// common
 import {
-    PATH_NOT_FOUND_ERROR,
     YUP_REQUEST_VALIDATION_ERROR,
-    UNAUTHORIZED_ERROR
 } from '@ssbdev/common';
+import { PATH_NOT_FOUND_ERROR } from "errors/path-not-found-error";
+import { UNAUTHORIZED_ERROR } from "errors/unauthorized-error";
+
+// errors
 
 // --------------------------------------------------------------------------------------------
 
@@ -43,7 +50,7 @@ describe( 'login', () => {
         expect( res.body.status ).toBe( "error" );
         expect( res.body.errors ).toHaveLength( 1 );
         expect( res.body.errors[0].name ).toBe( YUP_REQUEST_VALIDATION_ERROR );
-        expect( res.body.errors[0].field ).toBe( "emailId" );
+        expect( res.body.errors[0].field ).toBeUndefined();
     } );
 
     it( 'returns RequestValidationError if incorrect password is provided', async () => {
@@ -55,7 +62,7 @@ describe( 'login', () => {
         expect( res.body.status ).toBe( "error" );
         expect( res.body.errors ).toHaveLength( 1 );
         expect( res.body.errors[0].name ).toBe( YUP_REQUEST_VALIDATION_ERROR );
-        expect( res.body.errors[0].field ).toBe( "password" );
+        expect( res.body.errors[0].field ).toBeUndefined();
     } );
 
     it( 'returns RequestValidationError if unwanted data is present in request body', async () => {
@@ -68,7 +75,7 @@ describe( 'login', () => {
         expect( res.body.status ).toBe( "error" );
         expect( res.body.errors ).toHaveLength( 1 );
         expect( res.body.errors[0].name ).toBe( YUP_REQUEST_VALIDATION_ERROR );
-        expect( res.body.errors[0].field ).toBe( "undefined" );
+        expect( res.body.errors[0].field ).toBeUndefined();
     } );
 
     it( 'returns UnauthorizedError if user doesnit exists', async () => {

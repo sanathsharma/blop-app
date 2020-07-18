@@ -11,7 +11,10 @@ import UserDp from 'models/user/userDp.model';
 import User from 'models/user/user.model';
 
 // common lib
-import { NO_UNKNOWN, validate, sendData, BadRequestError } from '@ssbdev/common';
+import { NO_UNKNOWN, validate, sendData } from '@ssbdev/common';
+
+// errors
+import { BadRequestError } from "errors/bad-request-error";
 
 // initializations
 // validation schema
@@ -65,4 +68,5 @@ export default [
         } catch ( e ) {
             next( e );
         }
-    }]; 
+    }
+]; 

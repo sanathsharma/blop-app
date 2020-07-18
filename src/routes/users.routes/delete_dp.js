@@ -11,7 +11,10 @@ import statusCache from 'middleware/statusCache';
 import User from "models/user/user.model";
 
 // common lib
-import { NO_UNKNOWN, validate, sendMessage, UnauthorizedError } from '@ssbdev/common';
+import { NO_UNKNOWN, validate, sendMessage } from '@ssbdev/common';
+
+// errors
+import { UnauthorizedError } from "errors/unauthorized-error";
 
 // initializations
 // validation schema

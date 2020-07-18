@@ -6,10 +6,13 @@ import * as yup from 'yup';
 import statusCache from 'middleware/statusCache';
 
 // common lib
-import { NO_UNKNOWN, validate, sendMessage, BadRequestError } from '@ssbdev/common';
+import { NO_UNKNOWN, validate, sendMessage } from '@ssbdev/common';
 
 // models
 import Comment from 'models/comment.model';
+
+// errors
+import { BadRequestError } from "errors/bad-request-error";
 
 // initializations
 // validation schema
@@ -22,7 +25,8 @@ export default [
     statusCache( "comment" ),
     async ( req, res, next ) => {
         const { commentId } = req.validated.body;
-        const { userId, COMMENTSTATUS } = req;
+        const { COMMENTSTATUS } = req;
+        const { userId } = req.auth;
 
         try {
             // find comment and check if comment created by this user

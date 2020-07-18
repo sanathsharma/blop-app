@@ -1,14 +1,23 @@
+// vendors
 import request from 'supertest';
+
+// app
 import { app } from 'app';
+
+// common
 import {
-    PATH_NOT_FOUND_ERROR,
     AUTHENTICATION_FAILED_ERROR,
     YUP_REQUEST_VALIDATION_ERROR,
-    BAD_REQUEST_ERROR
 } from '@ssbdev/common';
 import { USER_ACCOUNT_DEACTIVETED_MSG } from '../deactivate_user';
+
+// models
 import User from 'models/user/user.model';
 import UserStatus from 'models/user/userStatus.model';
+
+// errors
+import { BAD_REQUEST_ERROR } from "errors/bad-request-error";
+import { PATH_NOT_FOUND_ERROR } from "errors/path-not-found-error";
 
 // ----------------------------------------------------------------------------------------------
 
@@ -61,10 +70,7 @@ describe( 'deactivateUser', () => {
     it( 'throws BadRequestError if user not found', async () => {
         const token = global.generateToken( 200, "test@example.com" );
 
-        const res = await deactivateUser()
-            .set( "Authorization", `Bearer ${ token }` )
-            .send( {} )
-            .expect( 200 );
+        const res = await deactivateUser( {}, token );
 
         expect( res.body.status ).toBe( "error" );
         expect( res.body.errors[0].name ).toBe( BAD_REQUEST_ERROR );

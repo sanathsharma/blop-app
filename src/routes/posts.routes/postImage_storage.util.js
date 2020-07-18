@@ -1,5 +1,6 @@
 import multer from 'multer';
 import fs from 'fs';
+import { v4 as uuid } from 'uuid';
 
 // ---------------------------- multer setup -------------------------
 
@@ -16,7 +17,7 @@ const storage = multer.diskStorage( {
     },
     filename ( req, file, callback ) {
         // todo: create encrypted url instead
-        callback( null, 'post_image_' + req['userId'] + new Date().toISOString() + '.' + file.originalname.split( '.' ).pop() );
+        callback( null, uuid() + '.' + file.originalname.split( '.' ).pop() );
     }
 } );
 

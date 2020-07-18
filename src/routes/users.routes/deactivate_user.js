@@ -10,7 +10,10 @@ import statusCache from 'middleware/statusCache';
 import User from "models/user/user.model";
 
 // common lib
-import { NO_UNKNOWN, validate, sendMessage, BadRequestError } from '@ssbdev/common';
+import { NO_UNKNOWN, validate, sendMessage } from '@ssbdev/common';
+
+// errors
+import { BadRequestError } from "errors/bad-request-error";
 
 // initializations
 // validation schema
@@ -22,7 +25,8 @@ export default [
     validate( deactivateUserReqBody ),
     statusCache(),
     async ( req, res, next ) => {
-        const { USERSTATUS, userId } = req;
+        const { USERSTATUS } = req;
+        const { userId } = req.auth;
 
         try {
             const user = await User.findByPk( userId );

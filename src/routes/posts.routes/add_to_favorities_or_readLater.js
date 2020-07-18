@@ -12,7 +12,10 @@ import FavoritePost from 'models/favoritePost.model';
 import ReadLaterPost from 'models/readLaterPost.model';
 
 // common lib
-import { NO_UNKNOWN, validate, sendMessage, NotFoundError } from '@ssbdev/common';
+import { NO_UNKNOWN, validate, sendMessage } from '@ssbdev/common';
+
+// errors
+import { NotFoundError } from "errors/not-found-error";
 
 // initializations
 // validation schema
@@ -27,7 +30,8 @@ export default ( isFavorities = false ) => [
         const model = isFavorities ? FavoritePost : ReadLaterPost;
 
         const { postId } = req.validated.body;
-        const { userId, POSTSTATUS } = req;
+        const { POSTSTATUS } = req;
+        const { userId } = req.auth;
 
         try {
             const post = await Post.findOne( {

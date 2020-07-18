@@ -10,7 +10,7 @@ import statusCache from 'middleware/statusCache';
 import Post from 'models/post/post.model';
 
 // common lib
-import { NO_UNKNOWN, validate, sendMessage, ServerError } from '@ssbdev/common';
+import { NO_UNKNOWN, validate, sendMessage } from '@ssbdev/common';
 
 // initializations
 // validation schema
@@ -23,7 +23,8 @@ export default [
     statusCache( "post" ),
     async ( req, res, next ) => {
         const { postId } = req.validated.body;
-        const { userId, POSTSTATUS } = req;
+        const { POSTSTATUS } = req;
+        const { userId } = req.auth;
 
         try {
             // find post (by user)

@@ -14,7 +14,10 @@ import UserDp from 'models/user/userDp.model';
 import PostImage from 'models/post/postImage.model';
 
 // common lib
-import { NO_UNKNOWN, validate, sendData, NotFoundError } from '@ssbdev/common';
+import { NO_UNKNOWN, validate, sendData } from '@ssbdev/common';
+
+// errors
+import { NotFoundError } from "errors/not-found-error";
 
 // initializations
 // validation schema

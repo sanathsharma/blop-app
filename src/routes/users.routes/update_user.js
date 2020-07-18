@@ -10,7 +10,10 @@ import statusCache from 'middleware/statusCache';
 import User from "models/user/user.model";
 
 // commonn lib
-import { NO_UNKNOWN, validate, sendMessage, UnauthorizedError } from '@ssbdev/common';
+import { NO_UNKNOWN, validate, sendMessage } from '@ssbdev/common';
+
+// errors
+import { UnauthorizedError } from "errors/unauthorized-error";
 
 // initializations
 // validation schema
@@ -29,7 +32,8 @@ export default [
     async ( req, res, next ) => {
         const allowedUpdates = ['password', 'firstName', 'lastName', 'bio'];
         const { updates } = req.validated.body;
-        const { USERSTATUS, userId } = req;
+        const { USERSTATUS } = req;
+        const { userId } = req.auth;
 
         try {
             // find the user

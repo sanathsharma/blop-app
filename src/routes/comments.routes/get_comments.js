@@ -6,7 +6,7 @@ import * as yup from 'yup';
 import statusCache from 'middleware/statusCache';
 
 // common lib
-import { NO_UNKNOWN, validate, sendData, exclude } from '@ssbdev/common';
+import { NO_UNKNOWN, validate, sendData } from '@ssbdev/common';
 
 // models
 import User from 'models/user/user.model';

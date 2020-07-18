@@ -9,7 +9,11 @@ import FavoritePost from 'models/favoritePost.model';
 import ReadLaterPost from 'models/readLaterPost.model';
 
 // common lib
-import { NO_UNKNOWN, validate, sendMessage, RequestValidationError, NotFoundError } from '@ssbdev/common';
+import { NO_UNKNOWN, validate, sendMessage } from '@ssbdev/common';
+
+// errors
+import { RequestValidationError } from "errors/request-validation-error";
+import { NotFoundError } from "errors/not-found-error";
 
 // initializations
 // validation schema

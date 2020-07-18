@@ -13,7 +13,11 @@ import Post from 'models/post/post.model';
 import PostImage from 'models/post/postImage.model';
 
 // common lib
-import { NO_UNKNOWN, validate, sendMessage, sendData, RequestValidationError, NotFoundError } from '@ssbdev/common';
+import { NO_UNKNOWN, validate, sendMessage, sendData } from '@ssbdev/common';
+
+// errors
+import { NotFoundError } from "errors/not-found-error";
+import { RequestValidationError } from "errors/request-validation-error";
 
 // initializations
 // validation schema (formData)
@@ -29,7 +33,8 @@ export default [
     statusCache( "post" ),
     async ( req, res, next ) => {
         const { postId, title, description } = req.validated.body;
-        const { userId, POSTSTATUS, file: image /*image uploaded*/ } = req;
+        const { POSTSTATUS, file: image /*image uploaded*/ } = req;
+        const { userId } = req.auth;
 
         // TODO: write helper util for positive integer
         if ( isNaN( parseInt( postId ) ) ) throw new RequestValidationError(

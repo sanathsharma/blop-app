@@ -3,10 +3,14 @@ import userStatusSeed from 'database/seeders/001-userStatus';
 import postStatusSeed from 'database/seeders/003-postStatus';
 import categoriesSeed from 'database/seeders/004-category';
 import User from 'models/user/user.model';
-import jwt from 'jsonwebtoken';
 import { redisclient } from 'cache';
+import { tokens } from 'helpers/generateTokens';
 
 beforeAll( async () => {
+    // set env variables
+    process.env.JWT_ACCESS_SECRET = "test";
+    process.env.JWT_REFRESH_SECRET = "test_2";
+
     // start db connection
     await db.authenticate();
 } );
@@ -35,9 +39,7 @@ afterAll( async () => {
 
 // -----------------------------------------------------------------------------------
 
-global.generateToken = ( userId, emailId ) => {
-    return jwt.sign( { userId, email: emailId }, process.env.JWT_SECRET );
-};
+global.generateToken = ( userId, emailId ) => tokens.access.generate( { userId, emailId } );
 
 global.signup = async ( emailId ) => {
     emailId = emailId ?? "test@g.com";

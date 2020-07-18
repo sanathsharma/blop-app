@@ -1,10 +1,17 @@
+// vendors
 import request from 'supertest';
+
+// app
 import { app } from 'app';
+
+// common
 import {
-    PATH_NOT_FOUND_ERROR,
     AUTHENTICATION_FAILED_ERROR,
     YUP_REQUEST_VALIDATION_ERROR
 } from '@ssbdev/common';
+
+// errors
+import { PATH_NOT_FOUND_ERROR } from "errors/path-not-found-error";
 
 // ----------------------------------------------------------------------------------------------
 

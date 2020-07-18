@@ -2,7 +2,6 @@
 // vendors
 import { pick } from "lodash";
 import { compare } from "bcryptjs";
-import { sign } from "jsonwebtoken";
 import * as yup from 'yup';
 
 // middlewares
@@ -17,9 +16,12 @@ import UserDp from "models/user/userDp.model";
 import {
     NO_UNKNOWN,
     validate,
-    sendData,
-    UnauthorizedError
+    sendData
 } from "@ssbdev/common";
+import { tokens } from "helpers/generateTokens";
+
+// errors
+import { UnauthorizedError } from "errors/unauthorized-error";
 
 // initializations
 // validation schema
@@ -56,17 +58,20 @@ export default [
             // if password did not match
             if ( !match ) throw new UnauthorizedError( 'Wrong password' );
 
+            // set payload
+            // store same info as accessToken in refreshToken, so when accessToken is lost on page refresh
+            // new accessToken can be generated with refresh tokens payload
+            const payload = { userId: user.id };
+
             // create token and send response on password match
-            const token = sign(
-                { userId: user.id, email: user.email },
-                process.env.JWT_SECRET,
-                { expiresIn: '1h' }
-            );
+            const token = tokens.access.generate( payload );
+            const refreshToken = tokens.refresh.generate( payload );
+
+            req.session = { refresh: refreshToken };
 
             sendData( res, {
                 user: pick( user, ["id", "emailId", "firstName", "lastName", "dp"] ),
-                token,
-                tokenExpiration: 1
+                token
             }, "Logged In" );
 
         } catch ( e ) {

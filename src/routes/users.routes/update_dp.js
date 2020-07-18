@@ -13,7 +13,11 @@ import User from "models/user/user.model";
 import UserDp from "models/user/userDp.model";
 
 // common lib
-import { NO_UNKNOWN, validate, sendData, RequestValidationError, UnauthorizedError } from '@ssbdev/common';
+import { NO_UNKNOWN, validate, sendData } from '@ssbdev/common';
+
+// errors
+import { UnauthorizedError } from "errors/unauthorized-error";
+import { RequestValidationError } from "errors/request-validation-error";
 
 // initializations
 // validation schema
@@ -26,8 +30,8 @@ export default [
     validate( updateDpReqBody ),
     statusCache(),
     async ( req, res, next ) => {
-        const { file, userId } = req; // appended by multer
-        const { USERSTATUS } = req;
+        const { file, USERSTATUS } = req;
+        const { userId } = req.auth;
 
         try {
             // file missing in form data -> multer upload did not run -> no file key on req

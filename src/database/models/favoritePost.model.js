@@ -4,7 +4,6 @@ import User from "./user/user.model";
 
 const FavoritePost = db.define( "FavoritePost", {} );
 
-// todo: postId and addedBy unique together
 FavoritePost.belongsTo( Post, { foreignKey: "postId", as: "post" } );
 FavoritePost.belongsTo( User, { foreignKey: "addedBy", as: "user" } );
 

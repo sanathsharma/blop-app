@@ -4,14 +4,16 @@ import * as yup from 'yup';
 import { pick } from 'lodash';
 
 // middlewares
+import statusCache from 'middleware/statusCache';
+
 // utils
 // models
 import Post from "models/post/post.model";
-import PostStatus from "models/post/postStatus.model";
 import User from 'models/user/user.model';
 import UserDp from 'models/user/userDp.model';
+
+// common
 import { NO_UNKNOWN, validate, sendData } from '@ssbdev/common';
-import statusCache from 'middleware/statusCache';
 
 // initializations
 // validation schema

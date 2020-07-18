@@ -3,16 +3,21 @@
 import * as yup from 'yup';
 
 // middlewares
-// utils
-import { COMMENT_DESC_MAX_CHAR } from 'constants/others.constants';
-import CommentStatus from 'models/commentStatus.model';
-import Comment from 'models/comment.model';
-
-// common lib
-import { NO_UNKNOWN, validate, sendMessage, BadRequestError } from '@ssbdev/common';
 import statusCache from 'middleware/statusCache';
 
+// utils
+// constants
+import { COMMENT_DESC_MAX_CHAR } from 'constants/others.constants';
+
+// common lib
+import { NO_UNKNOWN, validate, sendMessage } from '@ssbdev/common';
+
 // models
+import Comment from 'models/comment.model';
+
+// errors
+import { BadRequestError } from "errors/bad-request-error";
+
 // initializations
 // validation schema
 const updateCommentReqBodySchema = yup.object().shape( {
@@ -25,7 +30,8 @@ export default [
     statusCache( "comment" ),
     async ( req, res, next ) => {
         const { commentId, description } = req.validated.body;
-        const { userId, COMMENTSTATUS } = req;
+        const { COMMENTSTATUS } = req;
+        const { userId } = req.auth;
 
         try {
             // find comment and check if comment created by this user

@@ -6,7 +6,7 @@ import *  as yup from 'yup';
 import statusCache from 'middleware/statusCache';
 
 // common lib
-import { validate, sendData, NO_UNKNOWN, BadRequestError } from '@ssbdev/common';
+import { validate, sendData, NO_UNKNOWN } from '@ssbdev/common';
 
 // utils
 import { COMMENT_DESC_MAX_CHAR } from 'constants/others.constants';
@@ -14,6 +14,9 @@ import { COMMENT_DESC_MAX_CHAR } from 'constants/others.constants';
 // models
 import Post from 'models/post/post.model';
 import Comment from 'models/comment.model';
+
+// errors
+import { BadRequestError } from "errors/bad-request-error";
 
 // initializations
 // validation schema
@@ -29,7 +32,8 @@ export default [
     statusCache( "comment" ),
     async ( req, res, next ) => {
         const { postId, description, parent = null } = req.validated.body;
-        const { userId, POSTSTATUS, COMMENTSTATUS } = req;
+        const { POSTSTATUS, COMMENTSTATUS } = req;
+        const { userId } = req.auth;
 
         try {
             const post = await Post.findOne( {

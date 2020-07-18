@@ -26,7 +26,8 @@ export default ( isFavorities = false ) => [
     async ( req, res, next ) => {
         const modal = isFavorities ? FavoritePost : ReadLaterPost;
 
-        const { userId, POSTSTATUS } = req;
+        const { POSTSTATUS } = req;
+        const { userId } = req.auth;
 
         try {
             const instances = await modal.findAll( {

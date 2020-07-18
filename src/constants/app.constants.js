@@ -1,0 +1,10 @@
+const UP_TO_DATE = "Up to date";
+
+const ACCESS_TOKEN_LIFETIME = '5m';
+const REFRESH_TOKEN_LIFETIME = '7d';
+
+export {
+    UP_TO_DATE,
+    ACCESS_TOKEN_LIFETIME,
+    REFRESH_TOKEN_LIFETIME
+};

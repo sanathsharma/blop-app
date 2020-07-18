@@ -1,8 +1,13 @@
 {
     "compilerOptions": {
         "baseUrl": "src",
-        "module": "commonJS",
+        "module": "esnext",
+        "esModuleInterop": true,
+        "target": "es5",
+        "skipLibCheck": true,
         "checkJs": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": false,
         "moduleResolution": "node",
         "strict": true,
         "noImplicitAny": false,
