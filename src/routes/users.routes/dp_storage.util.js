@@ -1,12 +1,18 @@
+// vendors
 import multer from 'multer';
-import fs from 'fs';
 import { v4 as uuid } from 'uuid';
+
+// node
+import fs from 'fs';
+
+// constants
+import { USER_DP_DIR } from "constants/app.constants";
 
 // ---------------------------- multer setup -------------------------
 
 const storage = multer.diskStorage( {
     destination ( req, file, callback ) {
-        const path = './media/user_dp';
+        const path = USER_DP_DIR;
 
         // create folders if they dont exist
         if ( !fs.existsSync( path ) ) {
@@ -16,7 +22,6 @@ const storage = multer.diskStorage( {
         callback( null, path );
     },
     filename ( req, file, callback ) {
-        // todo: create encrypted url instead
         callback( null, uuid() + '.' + file.originalname.split( '.' ).pop() );
     }
 } );

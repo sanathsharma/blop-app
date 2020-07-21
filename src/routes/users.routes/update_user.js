@@ -15,14 +15,21 @@ import { NO_UNKNOWN, validate, sendMessage } from '@ssbdev/common';
 // errors
 import { UnauthorizedError } from "errors/unauthorized-error";
 
+// constants
+import {
+    PASSWORD_MIN_LENGTH,
+    USER_BIO_MAX_LENGTH,
+    USER_FIRSTNAME_MIN_LENGTH
+} from "constants/app.constants";
+
 // initializations
 // validation schema
 const updateUserReqBody = yup.object().shape( {
     updates: yup.object().shape( {
-        password: yup.string().trim().min( 8 ).notRequired(),
-        firstName: yup.string().trim().notRequired(),
+        password: yup.string().trim().min( PASSWORD_MIN_LENGTH ).notRequired(),
+        firstName: yup.string().trim().min( USER_FIRSTNAME_MIN_LENGTH ).notRequired(),
         lastName: yup.string().trim().notRequired(),
-        bio: yup.string().trim().max( 150 ).notRequired()
+        bio: yup.string().trim().max( USER_BIO_MAX_LENGTH ).notRequired()
     } ).strict( true ).required( "updates object is required" ).noUnknown( true, NO_UNKNOWN )
 } ).strict( true ).noUnknown( true, NO_UNKNOWN );
 

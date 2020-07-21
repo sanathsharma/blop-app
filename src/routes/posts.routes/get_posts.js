@@ -22,7 +22,6 @@ const getPostsReqBodySchema = yup.object().shape( {
     userId: yup.number().positive().integer().notRequired()
 } ).strict( true ).noUnknown( true, NO_UNKNOWN );
 
-// todo: getter function for truncated description
 export default [
     validate( getPostsReqBodySchema ),
     statusCache( "post" ),
@@ -60,7 +59,7 @@ export default [
 
             // send posts
             sendData( res, {
-                posts: posts.map( post => pick( post, ['id', 'title', 'createdAt', 'author'] ) )
+                posts: posts.map( post => pick( post, ['id', 'title', 'createdAt', 'author', 'shortDescription'] ) )
             } );
 
         } catch ( e ) {

@@ -9,7 +9,7 @@ import statusCache from 'middleware/statusCache';
 import { validate, sendData, NO_UNKNOWN } from '@ssbdev/common';
 
 // utils
-import { COMMENT_DESC_MAX_CHAR } from 'constants/others.constants';
+import { COMMENT_DESC_MAX_CHAR } from 'constants/app.constants';
 
 // models
 import Post from 'models/post/post.model';

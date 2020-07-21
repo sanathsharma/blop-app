@@ -54,13 +54,18 @@ export default [
             if ( !user ) throw new UnauthorizedError( 'User not found' );
 
             // create new dp
-            // TODO: update if already exists
-            const dp = await user.createDp( {
-                url: `user_dp/${ file.filename }`
-            } );
+            let newDp;
+            if ( user.dp )
+                user.dp.url = `user_dp/${ file.filename }`;
+            else
+                newDp = await user.createDp( {
+                    url: `user_dp/${ file.filename }`
+                } );
+
+            if ( user.dp && user.dp.changed() ) await user.save();
 
             // send url to client
-            sendData( res, { dp: dp.url } );
+            sendData( res, { dp: newDp?.url ?? user.dp.url ?? null } );
 
         } catch ( e ) {
             next( e );

@@ -22,16 +22,18 @@ import { NotFoundError } from "errors/not-found-error";
 // initializations
 // validation schema
 const getUserReqBodySchema = yup.object().shape( {
-    userId: yup.number().positive().integer().required( "userId is required" )
+    userId: yup.number().positive().integer()
 } ).strict( true ).noUnknown( true, NO_UNKNOWN );
 
-// TODO: send posts also
 export default [
     validate( getUserReqBodySchema ),
     statusCache(),
     async ( req, res, next ) => {
-        const { userId } = req.validated.body;
+        let { userId } = req.validated.body;
         const { USERSTATUS } = req;
+
+        // send current user if user id not present in request body
+        if ( !userId ) userId = req.auth.userId;
 
         try {
             const [user] = await db.query( `

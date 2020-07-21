@@ -7,7 +7,7 @@ import { pick } from "lodash";
 import statusCache from 'middleware/statusCache';
 
 // utils
-import { checkId } from "helpers/checkId";
+import { isValidId } from "helpers/isValidId";
 import uploadPostImage from "./postImage_storage.util";
 
 // models
@@ -28,7 +28,6 @@ const createPostReqBody = yup.object().shape( {
     categoryId: yup.string().required( 'categoryId is required' )
 } ).strict( true ).noUnknown( true, NO_UNKNOWN );
 
-// todo: add image
 export default [
     uploadPostImage.single( "image" ),
     validate( createPostReqBody ),
@@ -40,7 +39,7 @@ export default [
 
         try {
 
-            if ( !checkId( categoryId ) ) throw new RequestValidationError( "Invalid categoryId" );
+            if ( !isValidId( categoryId ) ) throw new RequestValidationError( "Invalid categoryId" );
 
             const category = await Category.findByPk( categoryId );
 

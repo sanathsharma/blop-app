@@ -39,6 +39,7 @@ app.use( cors( {
     methods: ["POST", "OPTIONS"],
     allowedHeaders: ['Content-Type', 'Authorization']
 } ) );
+// 'Origin', 'X-Requested-With', 'Accept'
 
 app.use( helmet() );
 

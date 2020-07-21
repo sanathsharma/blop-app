@@ -1,8 +1,16 @@
-import db from 'db';
+// vendors
 import { DataTypes } from 'sequelize';
-import UserDp from './userDp.model';
-import UserStatus from './userStatus.model';
 import { hash } from 'bcryptjs';
+
+// db
+import db from 'db';
+
+// models
+import UserDp from 'models/user/userDp.model';
+import UserStatus from 'models/user/userStatus.model';
+
+// constants
+import { PASSWORD_MIN_LENGTH, PASSWORD_MIN_LENGTH_MSG } from "constants/app.constants";
 
 const User = db.define( 'User', {
     emailId: {
@@ -15,7 +23,7 @@ const User = db.define( 'User', {
         allowNull: false,
         validate: {
             lencheck ( val ) {
-                if ( val.length < 8 ) throw new Error( "Length of password should be greater than or equal to 8." );
+                if ( val.length < PASSWORD_MIN_LENGTH ) throw new Error( PASSWORD_MIN_LENGTH_MSG );
             }
         }
     },

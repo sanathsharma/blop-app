@@ -10,6 +10,11 @@ module.exports = {
                 name: "inactive",
                 createdAt: new Date(),
                 updatedAt: new Date()
+            },
+            {
+                name: "not_verified",
+                createdAt: new Date(),
+                updatedAt: new Date()
             }],
             {}
         );

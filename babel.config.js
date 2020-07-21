@@ -38,7 +38,8 @@ module.exports = {
                     "db": `./src/db.js`,
                     "cache": `./src/cache.js`,
                     "utils": `./src/utils`,
-                    "app": `./src/app.js`
+                    "app": `./src/app.js`,
+                    "mailer": `./src/mailer.js`
                 }
             }
         ],

@@ -7,7 +7,7 @@ import statusCache from 'middleware/statusCache';
 
 // utils
 // constants
-import { COMMENT_DESC_MAX_CHAR } from 'constants/others.constants';
+import { COMMENT_DESC_MAX_CHAR } from 'constants/app.constants';
 
 // common lib
 import { NO_UNKNOWN, validate, sendMessage } from '@ssbdev/common';

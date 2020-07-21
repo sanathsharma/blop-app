@@ -60,16 +60,8 @@ export default [
                     {
                         model: Comment,
                         where: {
-                            // "$status.name$": "active", // todo: inactive commenst also queried, fix
                             statusId: COMMENTSTATUS.ACTIVE
                         },
-                        /**
-                         * eager loading
-                         * @link https://sequelize.org/master/manual/eager-loading.html
-                         * if no comments are there, then the query return no post even if post exists,
-                         * when required is made "false", it returns the post with comments -> empty array
-                         */
-                        required: false,
                         attributes: ["id", "description", "createdAt", "postId"],
                         as: "comments",
                         include: [{

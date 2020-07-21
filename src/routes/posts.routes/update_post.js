@@ -18,6 +18,7 @@ import { NO_UNKNOWN, validate, sendMessage, sendData } from '@ssbdev/common';
 // errors
 import { NotFoundError } from "errors/not-found-error";
 import { RequestValidationError } from "errors/request-validation-error";
+import { isValidId } from "helpers/isValidId";
 
 // initializations
 // validation schema (formData)
@@ -36,8 +37,7 @@ export default [
         const { POSTSTATUS, file: image /*image uploaded*/ } = req;
         const { userId } = req.auth;
 
-        // TODO: write helper util for positive integer
-        if ( isNaN( parseInt( postId ) ) ) throw new RequestValidationError(
+        if ( !isValidId( postId ) ) throw new RequestValidationError(
             "postId invalid",
             "Something went wrong, could not update post"
         );

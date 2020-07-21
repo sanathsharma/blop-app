@@ -81,4 +81,16 @@ describe( 'get_user', () => {
         expect( res.body.data.user.password ).toBeUndefined();
     } );
 
+    it( 'returns current user info userId not present in req body & doesnot have password in response', async () => {
+        const { token, userId } = await global.signup();
+
+        const res = await getUser( {}, token );
+
+        expect( res.body.status ).toBe( "success" );
+        expect( res.body.data.user.id ).toEqual( userId );
+
+        // password should not exists
+        expect( res.body.data.user.password ).toBeUndefined();
+    } );
+
 } );

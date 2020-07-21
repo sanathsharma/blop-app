@@ -42,12 +42,17 @@ export default ( type = "user" ) => ( req, res, next ) => {
             for ( let status of statuses ) {
                 if ( status.name === "active" ) STATUS.ACTIVE = status.id;
                 else if ( status.name === "inactive" ) STATUS.INACTIVE = status.id;
+                else if ( type === "user" ) STATUS.NOT_VERIFIED = status.id;
             }
 
             if (
                 !STATUS.hasOwnProperty( "ACTIVE" )
                 || !STATUS.hasOwnProperty( "INACTIVE" )
             ) throw new ServerError( `"active" / "inactive" status not found in ${ key }` );
+
+            if ( type === "user" &&
+                !STATUS.hasOwnProperty( "NOT_VERIFIED" )
+            ) throw new ServerError( "NOT_VERIFIED not found in userStatus" );
 
             // set in cache
             redisclient.set( key, JSON.stringify( STATUS ), ( e, ok ) => {

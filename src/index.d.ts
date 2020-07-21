@@ -9,6 +9,14 @@ declare namespace NodeJS {
         PG_DB: string;
         PG_HOST: string;
         PG_PORT: string;
-        CHANGE_PASSWORD_SECRET: string;
+        RESET_PASSWORD_SECRET: string;
+
+        OAUTH_CLIENT_ID: string;
+        OAUTH_USER: string;
+        OAUTH_CLIENT_SECRET: string;
+        OAUTH_ACCESS_TOKEN: string;
+        OAUTH_REFRESH_TOKEN: string;
+
+        NOREPLY_EMAIL: string;
     }
 }

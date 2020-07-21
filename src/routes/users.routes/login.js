@@ -3,6 +3,7 @@
 import { pick } from "lodash";
 import { compare } from "bcryptjs";
 import * as yup from 'yup';
+import * as Sequelize from 'sequelize';
 
 // middlewares
 import statusCache from "middleware/statusCache";
@@ -23,11 +24,14 @@ import { tokens } from "helpers/generateTokens";
 // errors
 import { UnauthorizedError } from "errors/unauthorized-error";
 
+// constants
+import { PASSWORD_MIN_LENGTH, PASSWORD_MIN_LENGTH_MSG } from "constants/app.constants";
+
 // initializations
 // validation schema
 const loginReqBodySchema = yup.object().shape( {
     emailId: yup.string().trim().email().required( "emailId is required" ),
-    password: yup.string().trim().min( 8, "password should have minimum of 8 characters" ).required( "password is required" )
+    password: yup.string().trim().min( PASSWORD_MIN_LENGTH, PASSWORD_MIN_LENGTH_MSG ).required( "password is required" )
 } ).strict( true ).noUnknown( true, NO_UNKNOWN );
 
 export default [
@@ -39,7 +43,15 @@ export default [
 
         try {
             const user = await User.findOne( {
-                where: { emailId, statusId: USERSTATUS.ACTIVE },
+                where: {
+                    emailId,
+                    statusId: {
+                        [Sequelize.Op.in]: [
+                            USERSTATUS.ACTIVE,
+                            USERSTATUS.NOT_VERIFIED
+                        ]
+                    }
+                },
                 include: [
                     {
                         model: UserDp,
@@ -71,7 +83,8 @@ export default [
 
             sendData( res, {
                 user: pick( user, ["id", "emailId", "firstName", "lastName", "dp"] ),
-                token
+                token,
+                verified: user.statusId === USERSTATUS.ACTIVE
             }, "Logged In" );
 
         } catch ( e ) {
